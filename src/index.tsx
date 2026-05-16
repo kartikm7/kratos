@@ -1,16 +1,12 @@
-import { createCliRenderer, TextAttributes } from "@opentui/core";
+import { createCliRenderer } from "@opentui/core";
 import { createRoot } from "@opentui/react";
+import App from "./App";
 
-function App() {
+function Main() {
   return (
-    <box alignItems="center" justifyContent="center" flexGrow={1}>
-      <box justifyContent="center" alignItems="flex-end">
-        <ascii-font font="tiny" text="OpenTUI" />
-        <text attributes={TextAttributes.DIM}>What will you build?</text>
-      </box>
-    </box>
+    <App />
   );
 }
 
 const renderer = await createCliRenderer();
-createRoot(renderer).render(<App />);
+createRoot(renderer).render(<Main />);

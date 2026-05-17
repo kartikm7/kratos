@@ -1,13 +1,13 @@
-import { TextAttributes } from "@opentui/core";
+import { DialogProvider } from "@opentui-ui/dialog/react";
+import { RootLayout } from "./components/AppLayout";
+import { Chat } from "./components/Chat/Chat";
 
 export default function App() {
   return (
-    <box alignItems="center" justifyContent="center" flexGrow={1}>
-      <box justifyContent="center" alignItems="center" gap={0.5}>
-        <ascii-font font="block" color="orange" text="Kratos" />
-        <text attributes={TextAttributes.DIM}>Assisted not replacing.</text>
-      </box>
-    </box>
+    <DialogProvider>
+      <RootLayout>
+        <Chat />
+      </RootLayout>
+    </DialogProvider>
   )
 }
-

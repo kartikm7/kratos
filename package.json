@@ -19,6 +19,8 @@
     "@opentui/core": "^0.2.10",
     "@opentui/react": "^0.2.10",
     "ai": "^6.0.184",
+    "axios": "^1.16.1",
+    "jotai": "^2.20.0",
     "opentui-spinner": "^0.0.6",
     "react": "^19.2.6",
     "zod": "^4.4.3"

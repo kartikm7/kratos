@@ -3,6 +3,8 @@ import { useKeyboard, useTerminalDimensions, type InputProps } from "@opentui/re
 import "opentui-spinner/react"
 import { act, useEffect, useState } from "react"
 import { SlashOptions } from "../Slash/mapping"
+import { SlashConnect } from "../Slash/Connect/SlashConnect"
+import { useDialog, useDialogState } from "@opentui-ui/dialog/react"
 
 interface CustomInputProps extends InputProps {
   loading?: boolean,
@@ -17,6 +19,8 @@ export const Input = ({ placeholder = "", autocomplete = true, loading = false, 
   const [inputFocused, setInputFocused] = useState(true)
   const [selectFocused, setSelectFocused] = useState(false)
   const [isSlashTriggered, setSlashTriggered] = useState(false)
+  const dialog = useDialog()
+  const dialogOpen = useDialogState(s => s.isOpen)
 
   useEffect(() => {
     if (props.value?.trim().startsWith("/")) {
@@ -59,6 +63,7 @@ export const Input = ({ placeholder = "", autocomplete = true, loading = false, 
         }
         break;
       default:
+        if (dialogOpen) break
         setSelectFocused(false)
         setInputFocused(true)
         break;
@@ -68,6 +73,7 @@ export const Input = ({ placeholder = "", autocomplete = true, loading = false, 
   const handleSelectionSubmit = () => {
     if (!selection) return
     if (!options.includes(selection)) return
+    SlashConnect(dialog)
   }
 
   return <box flexDirection="column" columnGap={2}>

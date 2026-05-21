@@ -8,7 +8,7 @@ const location = path.join(AppDirectory, "models.json")
 async function getModels() {
   const response = await axios.get("https://models.dev/api.json")
   const data = response.data
-  return data
+  return JSON.stringify(data)
 }
 
 function cacheModels(data: string) {
@@ -30,6 +30,7 @@ async function fetchAndCacheModels(forceRefresh = false) {
   console.log("Fetching models and Caching")
   const models = await getModels()
   cacheModels(models)
+  return models
 }
 
 export { getModels, cacheModels, modelsCached, cachedModels, fetchAndCacheModels }

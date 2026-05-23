@@ -1,7 +1,7 @@
-import type { SelectOption } from "@opentui/core"
+import type { InputRenderable } from "@opentui/core"
 import { useKeyboard, useTerminalDimensions, type InputProps } from "@opentui/react"
 import "opentui-spinner/react"
-import { act, useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { SlashOptions } from "../Slash/mapping"
 import { SlashConnect } from "../Slash/Connect/SlashConnect"
 import { useDialog, useDialogState } from "@opentui-ui/dialog/react"
@@ -13,14 +13,12 @@ interface CustomInputProps extends InputProps {
 
 export const Input = ({ placeholder = "", autocomplete = true, loading = false, ...props }: CustomInputProps) => {
   const { width } = useTerminalDimensions()
-  const [selection, setSelection] = useState<SelectOption | null>()
   const [options, setOptions] = useState(SlashOptions)
   const [index, setIndex] = useState(0)
-  const [inputFocused, setInputFocused] = useState(true)
-  const [selectFocused, setSelectFocused] = useState(false)
   const [isSlashTriggered, setSlashTriggered] = useState(false)
   const dialog = useDialog()
   const dialogOpen = useDialogState(s => s.isOpen)
+  const ref = useRef<InputRenderable>(null)
 
   useEffect(() => {
     if (props.value?.trim().startsWith("/")) {
@@ -45,42 +43,45 @@ export const Input = ({ placeholder = "", autocomplete = true, loading = false, 
   useKeyboard((key) => {
     switch (key.name) {
       case "up":
-        if (isSlashTriggered && inputFocused) {
-          setIndex(options.length - 1)
-          setSelection(options[options.length - 1])
-          setSelectFocused(true)
-          setInputFocused(false)
-        }
+        if (isSlashTriggered) setIndex(idx => idx == 0 ? options.length - 1 : Math.max(0, idx - 1))
         break;
       case "down":
-        if (isSlashTriggered && inputFocused) return
+        if (isSlashTriggered) setIndex(idx => idx == options.length - 1 ? 0 : Math.min(idx + 1, options.length - 1))
         break;
       case "return":
         // this is actually the submit state
-        if (isSlashTriggered && selectFocused) {
+        if (isSlashTriggered) {
           props.onSubmit = () => { } // because we can't submit an empty function?
           handleSelectionSubmit()
         }
         break;
       default:
         if (dialogOpen) break
-        setSelectFocused(false)
-        setInputFocused(true)
         break;
     }
   })
 
   const handleSelectionSubmit = () => {
+    const selection = options[index]
     if (!selection) return
     if (!options.includes(selection)) return
-    SlashConnect(dialog)
+    if (ref.current) ref.current.value = ""
+    switch (selection.name) {
+      case "/connect":
+        SlashConnect(dialog)
+        break;
+      case "/model":
+        break;
+      default:
+        break;
+    }
   }
 
   return <box flexDirection="column" columnGap={2}>
-    {autocomplete && isSlashTriggered && <select onChange={(_idx, option) => setSelection(option)} options={options} selectedIndex={index} width={width} focused={selectFocused} height={options.length * 2} />}
+    {autocomplete && isSlashTriggered && <select options={options} selectedIndex={index} width={width} height={options.length * 2} />}
     <box border borderStyle="single" width={width} paddingX={1} >
       {loading ? <spinner name="dots" /> : <></>}
-      <input placeholder={placeholder} focused={inputFocused} {...props} />
+      <input ref={ref} placeholder={placeholder} focused={true} {...props} />
     </box >
 
   </box>

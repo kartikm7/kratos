@@ -5,9 +5,10 @@ import { useKeyboard, useTerminalDimensions, type BoxProps } from "@opentui/reac
 export interface ComboboxProps extends BoxProps {
   placeholder?: string
   options: SelectOption[]
+  setSubmitValue: (option: SelectOption | undefined) => void
 }
 
-export const Combobox = ({ placeholder = "", options, ...props }: ComboboxProps) => {
+export const Combobox = ({ placeholder = "", options, setSubmitValue, ...props }: ComboboxProps) => {
   const { height } = useTerminalDimensions()
   const [list, setList] = useState(options)
   const [text, setText] = useState("")
@@ -20,6 +21,9 @@ export const Combobox = ({ placeholder = "", options, ...props }: ComboboxProps)
         break;
       case "down":
         setSelectedIndex(idx => Math.min(idx + 1, list.length - 1))
+        break;
+      case "return":
+        setSubmitValue(list[selectedIndex])
         break;
       default:
         break;

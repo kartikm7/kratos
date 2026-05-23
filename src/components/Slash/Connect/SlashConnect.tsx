@@ -1,20 +1,29 @@
-import { type DialogActions } from "@opentui-ui/dialog/react";
+import { useDialog, type DialogActions } from "@opentui-ui/dialog/react";
 import { useState } from "react";
 import { appendApiKey } from "../../../utils/auth";
 import { Combobox } from "../../../ui/Combobox";
 import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
 import { modelsListAtom } from "../../../state/atoms";
 import { useAtomValue } from "jotai";
+import type { SelectOption } from "@opentui/core";
+import { toast } from "@opentui-ui/toast/react";
 
 const SlashConnectDialog = () => {
   const [text, setText] = useState("")
   const list = useAtomValue(modelsListAtom)
+  const [comboxboxValue, setComboboxValue] = useState<SelectOption | undefined>()
+  const dialog = useDialog()
   const flatenned = Object.entries(list ?? {}).map(entry => {
     return { name: entry[0], value: entry[0], description: "" }
   })
   const handleSubmit = () => {
     try {
-      appendApiKey({ provider: "groq", apiKey: text })
+      if (!comboxboxValue) {
+        toast.error("Provider name is missing dawg")
+        return // early return
+      }
+      appendApiKey({ provider: comboxboxValue.name, apiKey: text })
+      dialog.closeAll()
     } catch (error) {
       console.log("Something went wrong", error)
     }
@@ -25,11 +34,12 @@ const SlashConnectDialog = () => {
       Enter you API key
     </DialogHeader>
     {
-      <Combobox placeholder="Choose a model" options={flatenned} />
-      //   <>
-      //   <input placeholder="API key" onSubmit={handleSubmit} onInput={setText} value={text} focused />
-      //   <text>enter <span style={{ fg: "grey" }}>submit</span></text>
-      // </>
+      !comboxboxValue
+        ? <Combobox setSubmitValue={setComboboxValue} placeholder="Choose a model" options={flatenned} />
+        : <>
+          <input placeholder="API key" onSubmit={handleSubmit} onInput={setText} value={text} focused />
+          <text>enter <span style={{ fg: "grey" }}>submit</span></text>
+        </>
     }
   </DialogRoot>
 }

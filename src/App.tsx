@@ -16,9 +16,8 @@ export default function App() {
 
     async function fetchAndSetModelsList() {
       const res = await fetchAndCacheModels()
-      const list = res ? JSON.parse(res) as ModelsList : null
-      if (!list) toast.error("Model list is empty")
-      else setModelsList(list)
+      if (!res) toast.error("Model list is empty")
+      else setModelsList(JSON.parse(JSON.parse(res))) // this is so fucking weird
     }
   }, [])
 

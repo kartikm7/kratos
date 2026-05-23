@@ -7,7 +7,7 @@ type ProviderDetails = {
 }
 
 type ModelsList = {
-  [key: symbol]: ProviderDetails
+  [key: string]: ProviderDetails
 }
 
 

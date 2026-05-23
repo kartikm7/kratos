@@ -1,9 +1,17 @@
 import { type DialogActions } from "@opentui-ui/dialog/react";
 import { useState } from "react";
 import { appendApiKey } from "../../../utils/auth";
+import { Combobox } from "../../../ui/Combobox";
+import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
+import { modelsListAtom } from "../../../state/atoms";
+import { useAtomValue } from "jotai";
 
 const SlashConnectDialog = () => {
   const [text, setText] = useState("")
+  const list = useAtomValue(modelsListAtom)
+  const flatenned = Object.entries(list ?? {}).map(entry => {
+    return { name: entry[0], value: entry[0], description: "" }
+  })
   const handleSubmit = () => {
     try {
       appendApiKey({ provider: "groq", apiKey: text })
@@ -12,14 +20,18 @@ const SlashConnectDialog = () => {
     }
   }
 
-  return <box gap={1} padding={1}>
-    <box flexDirection="row" justifyContent="space-between">
-      <text>Enter you API key</text>
-      <text fg="grey" >esc</text>
-    </box>
-    <input placeholder="API key" onSubmit={handleSubmit} onInput={setText} value={text} focused />
-    <text>enter <span style={{ fg: "grey" }}>submit</span></text>
-  </box>
+  return <DialogRoot>
+    <DialogHeader >
+      Enter you API key
+    </DialogHeader>
+    {
+      <Combobox placeholder="Choose a model" options={flatenned} />
+      //   <>
+      //   <input placeholder="API key" onSubmit={handleSubmit} onInput={setText} value={text} focused />
+      //   <text>enter <span style={{ fg: "grey" }}>submit</span></text>
+      // </>
+    }
+  </DialogRoot>
 }
 
 export const SlashConnect = (dialog: DialogActions) => {

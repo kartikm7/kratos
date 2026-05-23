@@ -65,7 +65,11 @@ export const Input = ({ placeholder = "", autocomplete = true, loading = false, 
     const selection = options[index]
     if (!selection) return
     if (!options.includes(selection)) return
+
+    // setting states back to initial values
     if (ref.current) ref.current.value = ""
+    setIndex(0)
+
     switch (selection.name) {
       case "/connect":
         SlashConnect(dialog)

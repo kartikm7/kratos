@@ -24,7 +24,9 @@ const SlashConnectDialog = () => {
       }
       appendApiKey({ provider: comboxboxValue.name, apiKey: text })
       dialog.closeAll()
+      toast.success(`${comboxboxValue.value} api key has been added!`)
     } catch (error) {
+      toast.error(`Something went wrong ${error}`)
       console.log("Something went wrong", error)
     }
   }

@@ -1,36 +1,45 @@
 import { useTerminalDimensions } from "@opentui/react"
 import { ChatLayout } from "../AppLayout"
 import { Input } from "./Input"
-import { streamText } from "ai"
-import { createGroq } from '@ai-sdk/groq';
-import { useState } from "react"
+import { type ModelMessage, type UserModelMessage } from "ai"
+import { useEffect, useState } from "react"
 import { Markdown } from "../../ui/Markdown"
+import { streamAtom } from "../../state/atoms";
+import { useAtom, useAtomValue } from "jotai";
+import { useLlm } from "../../hooks/useLlm"
+import { toast } from "@opentui-ui/toast/react"
 
 export const Chat = () => {
   const { width, height } = useTerminalDimensions()
   const [text, setText] = useState("")
-  const [isLoading, setLoading] = useState(false)
-  const [stream, setStream] = useState("")
-  const groq = createGroq()
+  const stream = useAtomValue(streamAtom)
+  const [messages, setMessages] = useState<ModelMessage[]>([])
+  const { isLoading, generate } = useLlm()
+  useEffect(() => { console.log("rendering on message change", JSON.stringify(messages, null, 4)) }, [messages])
 
   const handleSubmit = async () => {
     if (text.trim().length != 0) {
-      setLoading(true)
-      const { textStream } = streamText({
-        model: groq("openai/gpt-oss-20b"), prompt: text, onFinish: () => {
-          setText("")
-          setLoading(false)
-        }
-      })
-      for await (const textPart of textStream) {
-        setStream((pre) => pre + textPart)
+      const prompt: UserModelMessage = { role: "user", content: text }
+      const history = [...messages, prompt]
+      setMessages(history)
+      const res = await generate(history)
+      if (!res) {
+        toast.error("Something went wrong while generating")
+        return
       }
+      setMessages(pre => [...pre, ...res])
+      setText("")
     }
   }
 
   return <ChatLayout>
     <box height={height * 0.7} justifyContent="center" alignItems="center" gap={0.5}>
       <scrollbox stickyScroll={true} stickyStart="bottom">
+        {messages.map((val, idx) => {
+          if (typeof val.content == "string") {
+            return <Markdown content={val.content} streaming={true} width={width} key={idx} />
+          }
+        })}
         <Markdown content={stream} streaming width={width} />
       </scrollbox>
     </box>

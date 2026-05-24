@@ -1,14 +1,16 @@
 import fs from "fs"
 import path from "path"
 import { AppDirectory, makeAppDir } from "./os"
+import type { ConnectedProvidersList } from "../state/types"
 type ProviderAndKey = {
   provider: string,
   apiKey: string
 }
 
+
+const location = path.join(AppDirectory, "auth.json")
 const appendApiKey = (entry: ProviderAndKey) => {
   makeAppDir()
-  const location = path.join(AppDirectory, "auth.json")
   let newData: { [key: string]: { [key: string]: string } } = {}; // this is so damn confusing to read holy
   let prevData = null;
   if (fs.existsSync(location)) {
@@ -19,4 +21,10 @@ const appendApiKey = (entry: ProviderAndKey) => {
   fs.writeFileSync(location, JSON.stringify(newData))
 }
 
-export { appendApiKey }
+const readAuth = () => {
+  makeAppDir()
+  if (!fs.existsSync(location)) return
+  const data = fs.readFileSync(location, { encoding: "utf8", flag: "r" })
+  return JSON.parse(data) as ConnectedProvidersList
+}
+export { appendApiKey, readAuth }

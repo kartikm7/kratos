@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import { SlashOptions } from "../Slash/mapping"
 import { SlashConnect } from "../Slash/Connect/SlashConnect"
 import { useDialog, useDialogState } from "@opentui-ui/dialog/react"
+import { SlashModel } from "../Slash/Model/SlashModel"
 
 interface CustomInputProps extends InputProps {
   loading?: boolean,
@@ -75,6 +76,7 @@ export const Input = ({ placeholder = "", autocomplete = true, loading = false, 
         SlashConnect(dialog)
         break;
       case "/model":
+        SlashModel(dialog)
         break;
       default:
         break;
@@ -83,7 +85,7 @@ export const Input = ({ placeholder = "", autocomplete = true, loading = false, 
 
   return <box flexDirection="column" columnGap={2}>
     {autocomplete && isSlashTriggered && <select options={options} selectedIndex={index} width={width} height={options.length * 2} />}
-    <box border borderStyle="single" width={width} paddingX={1} >
+    <box border borderStyle="single" borderColor="grey" width={width} paddingX={1} >
       {loading ? <spinner name="dots" /> : <></>}
       <input ref={ref} placeholder={placeholder} focused={true} {...props} />
     </box >

@@ -5,16 +5,18 @@ import { useKeyboard, useTerminalDimensions, type BoxProps } from "@opentui/reac
 export interface ComboboxProps extends BoxProps {
   placeholder?: string
   options: SelectOption[]
-  setSubmitValue: (option: SelectOption | undefined) => void
+  setSubmitValue?: (option: SelectOption | undefined) => void,
+  onSubmit?: (comboxValue: SelectOption | undefined) => Promise<any> | any
+  showDescription?: boolean
 }
 
-export const Combobox = ({ placeholder = "", options, setSubmitValue, ...props }: ComboboxProps) => {
+export const Combobox = ({ placeholder = "", showDescription = false, onSubmit, options, setSubmitValue, ...props }: ComboboxProps) => {
   const { height } = useTerminalDimensions()
   const [list, setList] = useState(options)
   const [text, setText] = useState("")
   const [selectedIndex, setSelectedIndex] = useState(0)
 
-  useKeyboard(key => {
+  useKeyboard(async (key) => {
     switch (key.name) {
       case "up":
         setSelectedIndex(idx => Math.max(0, idx - 1))
@@ -23,7 +25,8 @@ export const Combobox = ({ placeholder = "", options, setSubmitValue, ...props }
         setSelectedIndex(idx => Math.min(idx + 1, list.length - 1))
         break;
       case "return":
-        setSubmitValue(list[selectedIndex])
+        if (setSubmitValue) setSubmitValue(list[selectedIndex])
+        if (onSubmit) await onSubmit(list[selectedIndex])
         break;
       default:
         break;
@@ -39,7 +42,7 @@ export const Combobox = ({ placeholder = "", options, setSubmitValue, ...props }
 
   return <box gap={1} height={height * 0.25} {...props}>
     <input onInput={setText} value={text} placeholder={placeholder} focused={true} />
-    <select height="100%" options={list} showDescription={false} selectedIndex={selectedIndex} />
+    <select height="100%" options={list} showDescription={showDescription} selectedIndex={selectedIndex} />
   </box>
 }
 

@@ -33,11 +33,11 @@ const SlashConnectDialog = () => {
 
   return <DialogRoot>
     <DialogHeader >
-      Enter you API key
+      {comboxboxValue ? "Enter you API key" : "Choose a model provider"}
     </DialogHeader>
     {
       !comboxboxValue
-        ? <Combobox setSubmitValue={setComboboxValue} placeholder="Choose a model" options={flatenned} />
+        ? <Combobox setSubmitValue={setComboboxValue} placeholder="Model provider" options={flatenned} />
         : <>
           <input placeholder="API key" onSubmit={handleSubmit} onInput={setText} value={text} focused />
           <text>enter <span style={{ fg: "grey" }}>submit</span></text>

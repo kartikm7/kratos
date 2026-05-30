@@ -8,6 +8,7 @@ import { streamAtom } from "../../state/atoms";
 import { useAtom, useAtomValue } from "jotai";
 import { useLlm } from "../../hooks/useLlm"
 import { toast } from "@opentui-ui/toast/react"
+import { Messages } from "./Messages/Messages"
 
 export const Chat = () => {
   const { width, height } = useTerminalDimensions()
@@ -15,7 +16,6 @@ export const Chat = () => {
   const stream = useAtomValue(streamAtom)
   const [messages, setMessages] = useState<ModelMessage[]>([])
   const { isLoading, generate } = useLlm()
-  useEffect(() => { console.log("rendering on message change", JSON.stringify(messages, null, 4)) }, [messages])
 
   const handleSubmit = async () => {
     if (text.trim().length != 0) {
@@ -35,12 +35,8 @@ export const Chat = () => {
   return <ChatLayout>
     <box height={height * 0.7} justifyContent="center" alignItems="center" gap={0.5}>
       <scrollbox stickyScroll={true} stickyStart="bottom">
-        {messages.map((val, idx) => {
-          if (typeof val.content == "string") {
-            return <Markdown content={val.content} streaming={true} width={width} key={idx} />
-          }
-        })}
-        <Markdown content={stream} streaming width={width} />
+        <Messages messages={messages} />
+        {/* <Markdown content={stream} streaming width={width} /> */}
       </scrollbox>
     </box>
     <box alignItems="flex-start">

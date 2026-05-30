@@ -9,19 +9,19 @@ import { fetchAndCacheModels } from "./utils/models";
 import { readAuth } from "./utils/auth";
 
 export default function App() {
-  const setModelsList = useSetAtom(modelsListAtom)
-  const setConnectedProvidersList = useSetAtom(connectedProvidersAtom)
+  const setModelsList = useSetAtom(modelsListAtom);
+  const setConnectedProvidersList = useSetAtom(connectedProvidersAtom);
 
   useEffect(() => {
-    fetchAndSetModelsList()
-    setConnectedProvidersList(readAuth()) // this is just getting data for whatever models we currently have
+    fetchAndSetModelsList();
+    setConnectedProvidersList(readAuth()); // this is just getting data for whatever models we currently have
 
     async function fetchAndSetModelsList() {
-      const res = await fetchAndCacheModels()
-      if (!res) toast.error("Model list is empty")
-      else setModelsList(JSON.parse(JSON.parse(res))) // this is so fucking weird
+      const res = await fetchAndCacheModels();
+      if (!res) toast.error("Model list is empty");
+      else setModelsList(JSON.parse(JSON.parse(res))); // this is so fucking weird
     }
-  }, [])
+  }, []);
 
   return (
     <>
@@ -32,5 +32,5 @@ export default function App() {
         </RootLayout>
       </DialogProvider>
     </>
-  )
+  );
 }

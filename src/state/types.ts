@@ -1,55 +1,58 @@
 type Model = {
-  id: string,
-  name: string,
-  family: string,
-  attachment: boolean,
-  reasoning: boolean,
-  tool_call: boolean,
-  temperature: boolean,
-  knowledge: string,
-  release_date: string,
-  last_updated: string,
+  id: string;
+  name: string;
+  family: string;
+  attachment: boolean;
+  reasoning: boolean;
+  tool_call: boolean;
+  temperature: boolean;
+  knowledge: string;
+  release_date: string;
+  last_updated: string;
   modalities: {
-    input: "text" | "image"[],
-    output: "text" | "image"[]
-  },
-  open_weights: boolean,
+    input: "text" | "image"[];
+    output: "text" | "image"[];
+  };
+  open_weights: boolean;
   limit: {
-    context: number,
-    output: number
-  },
-  status: string,
+    context: number;
+    output: number;
+  };
+  status: string;
   cost: {
-    input: number,
-    output: number
-  },
+    input: number;
+    output: number;
+  };
   // this I have added optional because, I need to flatten the map as I don't want to write a new a custom select component
   // the current one is just a little jagged, since we don't have access to <option> tag
   providerInfo?: {
-    id?: string,
-    npm?: string,
-    name: string
-  }
-}
+    id?: string;
+    npm?: string;
+    name: string;
+  };
+};
 type ProviderDetails = {
-  id?: string,
-  env?: string[],
-  npm?: string,
-  doc?: string,
-  models: { [key: string]: Model }
-}
-
+  id?: string;
+  env?: string[];
+  npm?: string;
+  doc?: string;
+  models: { [key: string]: Model };
+};
 
 type ModelsList = {
-  [key: string]: ProviderDetails
-}
+  [key: string]: ProviderDetails;
+};
 
 type ConnectedProvidersList = {
   [key: string]: {
-    key: string,
-    type: "api"
-  }
-}
+    key: string;
+    type: "api";
+  };
+};
 
-
-export { type Model, type ProviderDetails, type ModelsList, type ConnectedProvidersList }
+export {
+  type Model,
+  type ProviderDetails,
+  type ModelsList,
+  type ConnectedProvidersList,
+};

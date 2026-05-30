@@ -15,7 +15,7 @@ export const useLlm = () => {
     try {
       setLoading(true)
       if (!llm) throw new Error("Missing LLM")
-      const { textStream, response } = streamText({
+      const { textStream, response, fullStream } = streamText({
         model: llm(selectedModel?.id), providerOptions: {},
         onError: ({ error }) => {
           toast.error(`${error}`)
@@ -26,6 +26,7 @@ export const useLlm = () => {
         setStream((pre) => pre + textPart)
       }
       const res = await response
+      setStream("")
       return res.messages
     } catch (error) {
       toast.error(`Something went wrong: ${error}`)

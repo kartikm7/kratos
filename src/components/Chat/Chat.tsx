@@ -2,12 +2,10 @@ import { useTerminalDimensions } from "@opentui/react";
 import { ChatLayout } from "../AppLayout";
 import { Input } from "./Input";
 import { type ModelMessage, type UserModelMessage } from "ai";
-import { useEffect, useState } from "react";
-import { Markdown } from "../../ui/Markdown";
+import { useState } from "react";
 import { streamAtom } from "../../state/atoms";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { useLlm } from "../../hooks/useLlm";
-import { toast } from "@opentui-ui/toast/react";
 import { Messages } from "./Messages/Messages";
 
 export const Chat = () => {
@@ -24,7 +22,7 @@ export const Chat = () => {
       setMessages(history);
       const res = await generate(history);
       if (!res) {
-        toast.error("Something went wrong while generating");
+        setMessages((pre) => pre.slice(0, pre.length - 1));
         return;
       }
       setMessages((pre) => [...pre, ...res]);

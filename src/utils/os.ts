@@ -3,6 +3,7 @@ import os from "os";
 import fs from "fs";
 
 const AppDirectory = path.join(os.homedir(), ".kratos");
+const UserOS = os.type();
 
 const makeAppDir = () => {
   if (!fs.existsSync(AppDirectory)) {
@@ -11,4 +12,4 @@ const makeAppDir = () => {
   }
 };
 
-export { AppDirectory, makeAppDir };
+export { AppDirectory, makeAppDir, UserOS };

@@ -8,12 +8,16 @@ import type {
   ToolResultPart,
 } from "@ai-sdk/provider-utils";
 import { TextAttributes } from "@opentui/core";
+import { useEffect } from "react";
 
 type MessagesProps = {
   messages: ModelMessage[];
 };
 
 export const Messages = ({ messages }: MessagesProps) => {
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
   return (
     <box gap={1}>
       {messages.map((val, idx) => {
@@ -40,7 +44,9 @@ function MessageFactory({ val, idx }: { val: ModelMessage; idx: number }) {
     );
   } else {
     // const content = val.content as Array<TextPart | FilePart | ReasoningPart | ToolCallPart | ToolResultPart | ToolApprovalRequest>
-    const content = val.content as Array<TextPart | ReasoningPart>;
+    const content = val.content as Array<
+      TextPart | ReasoningPart | ToolCallPart | ToolResultPart
+    >;
     return content.map((inner, innerIdx) => {
       switch (inner.type) {
         case "reasoning":
@@ -54,7 +60,34 @@ function MessageFactory({ val, idx }: { val: ModelMessage; idx: number }) {
           );
         case "text":
           return (
-            <Markdown content={inner.text} streaming={false} width={width} />
+            <Markdown
+              key={innerIdx}
+              content={inner.text}
+              streaming={false}
+              width={width}
+            />
+          );
+        case "tool-call":
+          return (
+            <box border={["left"]} paddingX={1} key={innerIdx}>
+              <text attributes={TextAttributes.ITALIC | TextAttributes.DIM}>
+                {inner.type}
+              </text>
+              <text>{inner.toolName}</text>
+            </box>
+          );
+        case "tool-result":
+          return (
+            <box border={["left"]} paddingX={1} key={innerIdx}>
+              <text attributes={TextAttributes.ITALIC | TextAttributes.DIM}>
+                {inner.type}
+              </text>
+              <text>
+                {typeof inner.output == "string"
+                  ? inner.output
+                  : JSON.stringify(inner.output)}
+              </text>
+            </box>
           );
         default:
           break;

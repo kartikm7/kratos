@@ -11,6 +11,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
 import { toast } from "@opentui-ui/toast/react";
 import type { Model, ModelsList } from "../../../state/types";
+import { create } from "axios";
 
 // list based on connectedProviders
 const SlashModelDialog = () => {
@@ -60,8 +61,16 @@ const SlashModelDialog = () => {
         toast.error("Provider name is missing");
         return;
       }
-      const createModel =
-        pkg[`create${providerName[0]?.toUpperCase() + providerName.slice(1)}`];
+
+      const mostlyFunctionName = `create${providerName[0]?.toUpperCase() + providerName.slice(1)}`;
+      let createModel = pkg[mostlyFunctionName];
+      if (!createModel) {
+        // dynamically finding
+        const dynamicModuleName = Object.keys(pkg).find((val) =>
+          val.includes(mostlyFunctionName),
+        );
+        createModel = pkg[dynamicModuleName || ""];
+      }
       if (!connectedProviders) {
         toast.error("Connected providers is empty");
         return;

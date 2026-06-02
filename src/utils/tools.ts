@@ -2,10 +2,10 @@ import { tool } from "ai";
 import { z } from "zod/v4";
 import { Bash, OverlayFs } from "just-bash";
 import { createBashTool } from "bash-tool";
-import { chromium } from "playwright";
-// import { chromium } from "playwright-extra";
+import puppeteer from "puppeteer-extra";
 import stealth from "puppeteer-extra-plugin-stealth";
 import TurndownService from "turndown";
+// import puppeteer from "puppeteer";
 
 const SandboxBashTools = async () => {
   const overlayFs = new OverlayFs({
@@ -36,16 +36,17 @@ Help the user explore, search, and understand the contents.`,
 
 // TODO: There's a lightweight browser, built just for this if we can migrate to that easily it will make life a whole lot better
 const turndownService = new TurndownService();
+turndownService.remove(["script", "meta", "del"]);
+
 const WebBrowserTool = tool({
   description:
     "Scrape from any website, this launches playwright and returns the requested url page in markdown format",
   inputSchema: z.object({ url: z.string() }),
   execute: async ({ url }) => {
-    // chromium.use(stealth()); // bot detection evasion
-    const browser = await chromium.launch({ headless: true });
+    puppeteer.use(stealth());
+    const browser = await puppeteer.launch({ headless: "shell" });
     try {
-      const context = await browser.newContext();
-      const page = await context.newPage();
+      const page = await browser.newPage();
       await page.goto(url, { waitUntil: "domcontentloaded" }); // this travels to the page
       const content = await page.content();
       const markdown = turndownService.turndown(content);

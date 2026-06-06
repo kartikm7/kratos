@@ -36,7 +36,7 @@ Help the user explore, search, and understand the contents.`,
 
 // TODO: There's a lightweight browser, built just for this if we can migrate to that easily it will make life a whole lot better
 const turndownService = new TurndownService();
-turndownService.remove(["script", "meta", "del"]);
+turndownService.remove(["script", "meta", "del", "style"]);
 
 const WebBrowserTool = tool({
   description:

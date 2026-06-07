@@ -11,7 +11,6 @@ const SandboxBashTools = async () => {
   const overlayFs = new OverlayFs({
     root: process.cwd(),
     mountPoint: "/workspace",
-    readOnly: true,
   });
   const bash = new Bash({
     fs: overlayFs,

@@ -40,6 +40,12 @@ export const Chat = () => {
       >
         <scrollbox stickyScroll={true} stickyStart="bottom">
           <Messages messages={messages} />
+          {stream && (
+            <Messages
+              messages={[{ role: "assistant", content: stream }]}
+              streaming
+            />
+          )}
           {/* <Markdown content={stream} streaming width={width} /> */}
         </scrollbox>
       </box>

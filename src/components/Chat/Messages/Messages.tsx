@@ -12,23 +12,32 @@ import { useEffect } from "react";
 
 type MessagesProps = {
   messages: ModelMessage[];
+  streaming?: boolean;
 };
 
-export const Messages = ({ messages }: MessagesProps) => {
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
+export const Messages = ({ messages, streaming = false }: MessagesProps) => {
+  // useEffect(() => {
+  //   console.log(messages);
+  // }, [messages]);
   return (
     <box gap={1}>
       {messages.map((val, idx) => {
-        return <MessageFactory val={val} idx={idx} />;
+        return <MessageFactory val={val} idx={idx} streaming={streaming} />;
       })}
     </box>
   );
 };
 
 // this just renders based on the matching Message type
-function MessageFactory({ val, idx }: { val: ModelMessage; idx: number }) {
+function MessageFactory({
+  val,
+  idx,
+  streaming = false,
+}: {
+  val: ModelMessage;
+  idx: number;
+  streaming: boolean;
+}) {
   const { width } = useTerminalDimensions();
 
   if (typeof val.content == "string") {
@@ -36,7 +45,7 @@ function MessageFactory({ val, idx }: { val: ModelMessage; idx: number }) {
       <box backgroundColor="orange">
         <Markdown
           content={val.content}
-          streaming={false}
+          streaming={streaming}
           width={width}
           key={idx}
         />
@@ -55,7 +64,11 @@ function MessageFactory({ val, idx }: { val: ModelMessage; idx: number }) {
               <text attributes={TextAttributes.ITALIC | TextAttributes.DIM}>
                 {inner.type}
               </text>
-              <Markdown content={inner.text} streaming={false} width={width} />
+              <Markdown
+                content={inner.text}
+                streaming={streaming}
+                width={width}
+              />
             </box>
           );
         case "text":
@@ -63,7 +76,7 @@ function MessageFactory({ val, idx }: { val: ModelMessage; idx: number }) {
             <Markdown
               key={innerIdx}
               content={inner.text}
-              streaming={false}
+              streaming={streaming}
               width={width}
             />
           );

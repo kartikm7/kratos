@@ -8,6 +8,7 @@ import { useAtomValue } from "jotai";
 import { useLlm } from "../../hooks/useLlm";
 import { Messages } from "./Messages/Messages";
 import { AsciiTitle } from "./AsciiTitle";
+import { StaticInfoBar } from "./StaticInfoBar";
 
 export const Chat = () => {
   const { width, height } = useTerminalDimensions();
@@ -64,6 +65,7 @@ export const Chat = () => {
           value={text}
           loading={isLoading}
         />
+        <StaticInfoBar />
       </box>
     </ChatLayout>
   );

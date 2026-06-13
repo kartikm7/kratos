@@ -120,7 +120,6 @@ export const Input = ({
         width={width}
         paddingX={1}
       >
-        {loading ? <spinner name="dots" /> : <></>}
         <input ref={ref} placeholder={placeholder} focused={true} {...props} />
       </box>
     </box>

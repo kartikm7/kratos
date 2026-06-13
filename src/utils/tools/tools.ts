@@ -70,6 +70,10 @@ const SandboxBashTools = async () => {
     sandbox: sandboxBash,
     destination: "/workspace",
     extraInstructions: `You have access to files and directories mounted at /workspace (Sandboxed Directory, Sandboxing is only for Bash Commands).
+Do not use this to Read/Write/Edit files, use the explicit tools for those since those are not sandboxed.
+
+/workspace is the sandbox mount it's sandboxing ${process.cwd()}
+
 Use bash commands to explore:
 - ls /workspace to see the directory structure
 - cat /workspace/filename to read files

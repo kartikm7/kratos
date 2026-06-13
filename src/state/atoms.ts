@@ -11,7 +11,8 @@ import {
   WriteFile,
   SandboxBashTools,
   WebBrowserTool,
-} from "../utils/tools";
+} from "../utils/tools/tools";
+import { KnowledgeBaseTool } from "../utils/tools/knowledgeBase/knowledgeBaseTool";
 
 export const llmAtom = atom<any>(); // need to figure a generic type for this
 // TODO: Most likely string is not the right type, when I start adding tools this will most likely cause a problem
@@ -28,4 +29,5 @@ export const toolsAtom = atom({
   ReadFile,
   WriteFile,
   EditFile,
+  KnowledgeBaseTool,
 });

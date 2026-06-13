@@ -52,10 +52,10 @@ export const Chat = () => {
             {/* <Markdown content={stream} streaming width={width} /> */}
           </scrollbox>
         ) : (
-            <box justifyContent="center" alignItems="center" gap={2}>
-              <AsciiTitle />
-              <text>Aims to assist, not replace you.</text>
-            </box>
+          <box justifyContent="center" alignItems="center" gap={2}>
+            <AsciiTitle />
+            <text>Aims to assist, not replace you.</text>
+          </box>
         )}
       </box>
       <box alignItems="flex-start">

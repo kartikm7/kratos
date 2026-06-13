@@ -9,6 +9,7 @@ import type {
 } from "@ai-sdk/provider-utils";
 import { TextAttributes } from "@opentui/core";
 import { useEffect } from "react";
+import { capitalise } from "../../../utils/string";
 
 type MessagesProps = {
   messages: ModelMessage[];
@@ -80,20 +81,21 @@ function MessageFactory({
               width={width}
             />
           );
-        case "tool-call":
-          return (
-            <box border={["left"]} paddingX={1} key={innerIdx}>
-              <text attributes={TextAttributes.ITALIC | TextAttributes.DIM}>
-                {inner.type}
-              </text>
-              <text>{inner.toolName}</text>
-            </box>
-          );
+        // This points to the TODO regarding tool-call in useLlm.tsx
+        // case "tool-call":
+        //   return (
+        //     <box border={["left"]} paddingX={1} key={innerIdx}>
+        //       <text attributes={TextAttributes.ITALIC | TextAttributes.DIM}>
+        //         {inner.type}
+        //       </text>
+        //       <text>{inner.toolName}</text>
+        //     </box>
+        //   );
         case "tool-result":
           return (
             <box border={["left"]} paddingX={1} key={innerIdx}>
               <text attributes={TextAttributes.ITALIC | TextAttributes.DIM}>
-                {inner.type}
+                {capitalise(inner.toolName)}
               </text>
               <text>
                 {typeof inner.output == "string"

@@ -36,6 +36,7 @@
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "react": "^19.2.7",
+    "replace-in-file": "^8.4.0",
     "turndown": "^7.2.4",
     "zod": "^4.4.3"
   },

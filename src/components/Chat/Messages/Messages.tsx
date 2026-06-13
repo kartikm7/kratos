@@ -21,7 +21,7 @@ export const Messages = ({ messages, streaming = false }: MessagesProps) => {
   //   console.log(messages);
   // }, [messages]);
   return (
-    <box gap={1}>
+    <box gap={1} marginTop={streaming ? 1 : 0}>
       {messages.map((val, idx) => {
         return <MessageFactory val={val} idx={idx} streaming={streaming} />;
       })}

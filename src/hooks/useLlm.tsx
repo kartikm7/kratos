@@ -75,13 +75,14 @@ export const useLlm = () => {
               pushMessageToStream({ type: "reasoning", text: part.text });
             }
             break;
+          // TODO: The tool call causes an error to be thrown not sure why ffs
           case "tool-call":
-            pushMessageToStream({
-              type: "tool-call",
-              toolName: part.toolName,
-              toolCallId: part.toolCallId,
-              input: part.input,
-            });
+            // pushMessageToStream({
+            //   type: "tool-call",
+            //   toolName: part.toolName,
+            //   toolCallId: part.toolCallId,
+            //   input: part.input,
+            // });
             break;
           case "tool-result":
             pushMessageToStream({

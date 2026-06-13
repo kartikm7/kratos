@@ -7,6 +7,7 @@ import { streamAtom } from "../../state/atoms";
 import { useAtomValue } from "jotai";
 import { useLlm } from "../../hooks/useLlm";
 import { Messages } from "./Messages/Messages";
+import { AsciiTitle } from "./AsciiTitle";
 
 export const Chat = () => {
   const { width, height } = useTerminalDimensions();
@@ -38,16 +39,23 @@ export const Chat = () => {
         alignItems="center"
         gap={0.5}
       >
-        <scrollbox stickyScroll={true} stickyStart="bottom">
-          <Messages messages={messages} />
-          {stream && (
-            <Messages
-              messages={[{ role: "assistant", content: stream }]}
-              streaming
-            />
-          )}
-          {/* <Markdown content={stream} streaming width={width} /> */}
-        </scrollbox>
+        {messages.length > 0 ? (
+          <scrollbox stickyScroll={true} stickyStart="bottom">
+            <Messages messages={messages} />
+            {stream && (
+              <Messages
+                messages={[{ role: "assistant", content: stream }]}
+                streaming
+              />
+            )}
+            {/* <Markdown content={stream} streaming width={width} /> */}
+          </scrollbox>
+        ) : (
+            <box justifyContent="center" alignItems="center" gap={2}>
+              <AsciiTitle />
+              <text>Aims to assist, not replace you.</text>
+            </box>
+        )}
       </box>
       <box alignItems="flex-start">
         <Input

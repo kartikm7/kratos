@@ -5,18 +5,41 @@ import {
   streamAtom,
   toolsAtom,
 } from "../state/atoms";
-import { ToolLoopAgent, type ModelMessage } from "ai";
-import { useState } from "react";
+import {
+  ToolLoopAgent,
+  type AssistantModelMessage,
+  type ModelMessage,
+} from "ai";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "@opentui-ui/toast/react";
 import { KratosSystemPrompt } from "../utils/prompts";
-import type { AiMessage } from "../state/types";
+import type { AiMessage, MessageStream } from "../state/types";
+import { useKeyboard } from "@opentui/react";
 
 export const useLlm = () => {
   const llm = useAtomValue(llmAtom);
   const selectedModel = useAtomValue(selectedModelAtom);
   const [isLoading, setLoading] = useState(false);
   const setStream = useSetAtom(streamAtom);
+  let streamCache: MessageStream = []; // this is irritating the fuck out of me, but there's no choice but to do this
   const tools = useAtomValue(toolsAtom);
+  let abortController = new AbortController();
+  const ref = useRef(abortController);
+
+  // useEffect(() => {}, [ref.current]);
+  useKeyboard((key) => {
+    if (key.name == "escape") {
+      if (ref.current) ref.current.abort("userCancelled");
+    }
+  });
+
+  function updateLastMessageCache(text: string) {
+    let last = streamCache.pop();
+    if (last && (last.type == "reasoning" || last.type == "text")) {
+      last = { ...last, text: last.text + text };
+    }
+    if (last) streamCache.push(last);
+  }
 
   function updateLastMessage(text: string) {
     setStream((pre) => {
@@ -26,10 +49,12 @@ export const useLlm = () => {
       }
       return [...pre];
     });
+    updateLastMessageCache(text);
   }
 
   function pushMessageToStream(message: AiMessage) {
     setStream((pre) => [...pre, message]);
+    streamCache.push(message);
   }
 
   async function generate(messages: ModelMessage[]) {
@@ -38,11 +63,12 @@ export const useLlm = () => {
       if (!llm) throw new Error("Missing LLM");
       const agent = new ToolLoopAgent({
         model: llm(selectedModel?.id),
-        // instructions: KratosSystemPrompt,
+        instructions: KratosSystemPrompt,
         tools: tools,
       });
       const result = agent.stream({
         messages: messages,
+        abortSignal: ref.current.signal,
       });
       let incomingReasoning = false;
       let incomingText = false;
@@ -69,9 +95,9 @@ export const useLlm = () => {
             }
             break;
           case "reasoning-delta":
-            if (incomingReasoning && lastPartType === "reasoning-delta")
+            if (incomingReasoning && lastPartType === "reasoning-delta") {
               updateLastMessage(part.text);
-            else {
+            } else {
               pushMessageToStream({ type: "reasoning", text: part.text });
             }
             break;
@@ -100,11 +126,18 @@ export const useLlm = () => {
       const res = await (await result).response;
       return res.messages;
     } catch (error) {
-      toast.error(`Something went wrong: ${error}`);
-      console.log(error);
+      if (error == "userCancelled") {
+        const modelMessage: AssistantModelMessage[] = [
+          { role: "assistant", content: streamCache },
+        ];
+        return modelMessage;
+      }
+      toast.error(`${error}`);
     } finally {
       setStream([]);
+      ref.current = new AbortController();
       setLoading(false);
+      streamCache = [];
     }
   }
   return { isLoading, generate };

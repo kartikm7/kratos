@@ -2,7 +2,14 @@ import type { BoxProps } from "@opentui/react";
 import { useAtomValue } from "jotai";
 import { selectedModelAtom, streamAtom } from "../../state/atoms";
 
-export const StaticInfoBar = ({ ...props }: BoxProps) => {
+interface DynamicInfoBarProps extends BoxProps {
+  loading: boolean;
+}
+
+export const DynamicInfoBar = ({
+  loading = false,
+  ...props
+}: DynamicInfoBarProps) => {
   const stream = useAtomValue(streamAtom);
   const selectedModel = useAtomValue(selectedModelAtom);
   return (
@@ -14,11 +21,11 @@ export const StaticInfoBar = ({ ...props }: BoxProps) => {
       {...props}
     >
       <box alignItems="center" flexDirection="row">
-        {stream.length > 0 && (
+        {loading && (
           <>
             <spinner name="growHorizontal" color="orange" />
             <text marginLeft={1} fg="grey">
-              Streaming...
+              Streaming... (esc to cancel)
             </text>
           </>
         )}

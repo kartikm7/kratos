@@ -15,12 +15,8 @@ const ReadFile = tool({
   description: "Read the contents of a file",
   inputSchema: z.object({ path: z.string() }),
   execute: async ({ path }) => {
-    try {
-      const contents = await readFile(path, { encoding: "utf-8" });
-      return contents;
-    } catch (error) {
-      return error;
-    }
+    const contents = await readFile(path, { encoding: "utf-8" });
+    return String(contents);
   },
 });
 
@@ -28,14 +24,10 @@ const WriteFile = tool({
   description: "Write a new file to a desired path",
   inputSchema: z.object({ path: z.string(), contents: z.string() }),
   execute: async ({ path, contents }) => {
-    try {
-      if (await exists(path))
-        throw new Error("A file of this name already exists");
-      await writeFile(path, contents);
-      return { success: true }; // how times fly, need to return a value that the llm needs to understand ffs
-    } catch (error) {
-      return error;
-    }
+    if (await exists(path))
+      throw new Error("A file of this name already exists");
+    await writeFile(path, contents);
+    return { success: true }; // how times fly, need to return a value that the llm needs to understand ffs
   },
 });
 

@@ -21,6 +21,7 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.82",
     "@ai-sdk/groq": "^3.0.41",
+    "@ai-sdk/mistral": "^3.0.39",
     "@libsql/client": "^0.17.3",
     "@opentui-ui/dialog": "^0.1.2",
     "@opentui-ui/toast": "^0.0.5",

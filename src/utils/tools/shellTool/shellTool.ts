@@ -24,7 +24,7 @@ export const ShellTool = tool({
     let result: any;
     switch (cmd) {
       case "ls":
-        result = shell.ls(flags, paths);
+        result = !!flags ? shell.ls(flags, paths) : shell.ls(paths); // this is sleezy, but need to do this
         break;
       case "find":
         result = shell.find(paths);
@@ -41,9 +41,7 @@ export const ShellTool = tool({
       default:
         break;
     }
-    console.log(cmd, flags, regex, paths);
-    console.log("result", result);
-    result = JSON.stringify(result);
+    result = JSON.stringify(result.stdout);
     const tokensInCharacters = Math.abs(MAX_TOOLS_TOKEN / 4); // 4 characters is roughly 1 token
     result =
       result.length > tokensInCharacters

@@ -22,6 +22,7 @@
     "@ai-sdk/google": "^3.0.82",
     "@ai-sdk/groq": "^3.0.41",
     "@ai-sdk/mistral": "^3.0.39",
+    "@ai-sdk/openai-compatible": "^2.0.50",
     "@libsql/client": "^0.17.3",
     "@opentui-ui/dialog": "^0.1.2",
     "@opentui-ui/toast": "^0.0.5",
@@ -43,6 +44,7 @@
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "react": "^19.2.7",
     "replace-in-file": "^8.4.0",
+    "shelljs": "^0.10.0",
     "turndown": "^7.2.4",
     "zod": "^4.4.3"
   },

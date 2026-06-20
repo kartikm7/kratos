@@ -2,6 +2,8 @@ import axios from "axios";
 import path from "path";
 import fs from "fs";
 import { AppDirectory, makeAppDir } from "./os";
+import { toast } from "@opentui-ui/toast/react";
+import type { ConnectedProvidersList, Model } from "../state/types";
 
 const location = path.join(AppDirectory, "models.json");
 async function getModels() {
@@ -33,10 +35,44 @@ async function fetchAndCacheModels(forceRefresh = false) {
   return models;
 }
 
+async function createModel(
+  selectedModel: Model,
+  connectedProviders: ConnectedProvidersList,
+) {
+  const pkg = await import(`${selectedModel.providerInfo?.npm}`);
+  if (!pkg) {
+    toast.error("Could not import model package");
+    return;
+  }
+  const providerName = selectedModel.providerInfo?.name;
+  if (!providerName) {
+    toast.error("Provider name is missing");
+    return;
+  }
+
+  const mostlyFunctionName = `create${providerName[0]?.toUpperCase() + providerName.slice(1)}`;
+  let createModel = pkg[mostlyFunctionName];
+  if (!createModel) {
+    // dynamically finding
+    const dynamicModuleName = Object.keys(pkg).find((val) =>
+      val.includes(mostlyFunctionName),
+    );
+    createModel = pkg[dynamicModuleName || ""];
+  }
+  if (!connectedProviders) {
+    toast.error("Connected providers is empty");
+    return;
+  }
+  const auth = connectedProviders[providerName];
+  const model = createModel({ apiKey: auth?.key });
+  return model;
+}
+
 export {
   getModels,
   cacheModels,
   modelsCached,
   cachedModels,
   fetchAndCacheModels,
+  createModel,
 };

@@ -7,11 +7,12 @@ import {
   modelsListAtom,
   selectedModelAtom,
 } from "../../../state/atoms";
+import { saveSelectedModel } from "../../../utils/preferences";
 import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
 import { toast } from "@opentui-ui/toast/react";
 import type { Model, ModelsList } from "../../../state/types";
-import { create } from "axios";
+import { createModel } from "../../../utils/models";
 
 // list based on connectedProviders
 const SlashModelDialog = () => {
@@ -51,35 +52,11 @@ const SlashModelDialog = () => {
         return; // early return
       }
       const selectedModel = comboxboxValue.value as Model;
-      const pkg = await import(`${selectedModel.providerInfo?.npm}`);
-      if (!pkg) {
-        toast.error("Could not import model package");
-        return;
-      }
-      const providerName = selectedModel.providerInfo?.name;
-      if (!providerName) {
-        toast.error("Provider name is missing");
-        return;
-      }
-
-      const mostlyFunctionName = `create${providerName[0]?.toUpperCase() + providerName.slice(1)}`;
-      let createModel = pkg[mostlyFunctionName];
-      if (!createModel) {
-        // dynamically finding
-        const dynamicModuleName = Object.keys(pkg).find((val) =>
-          val.includes(mostlyFunctionName),
-        );
-        createModel = pkg[dynamicModuleName || ""];
-      }
-      if (!connectedProviders) {
-        toast.error("Connected providers is empty");
-        return;
-      }
-      const auth = connectedProviders[providerName];
-      const model = createModel({ apiKey: auth?.key });
+      const model = createModel(selectedModel, connectedProviders || {});
       console.log("inside slash", model);
       setLlm(() => model); // created Model object
       setSelectedModel(selectedModel);
+      saveSelectedModel(selectedModel);
       toast.success(`Set ${selectedModel.name} as the default model!`);
       dialog.closeAll();
     } catch (error) {

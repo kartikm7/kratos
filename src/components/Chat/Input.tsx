@@ -104,13 +104,17 @@ export const Input = ({
   };
 
   return (
-    <box flexDirection="column" columnGap={2}>
+    <box flexDirection="column" columnGap={2} position="relative">
       {autocomplete && isSlashTriggered && (
         <select
+          position="absolute"
+          bottom="100%"
+          zIndex={1}
           options={options}
           selectedIndex={index}
           width={width}
           height={options.length * 2}
+          backgroundColor="dark-grey"
         />
       )}
       <box

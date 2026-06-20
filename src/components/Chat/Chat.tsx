@@ -35,7 +35,7 @@ export const Chat = () => {
   return (
     <ChatLayout>
       <box
-        height={height * 0.7}
+        height={height * 0.85}
         justifyContent="center"
         alignItems="center"
         gap={0.5}

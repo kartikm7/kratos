@@ -1,5 +1,13 @@
-export const AsciiTitle = () => { 
-          return <><text fg="orange">{`   ▄█   ▄█▄    ▄████████    ▄████████     ███      ▄██████▄     ▄████████
+import { useAtomValue } from "jotai";
+import { themeAtom } from "../../state/atoms";
+
+export const AsciiTitle = () => {
+  const theme = useAtomValue(themeAtom);
+  return (
+    <>
+      <text
+        fg={theme?.dark.palette.primary}
+      >{`   ▄█   ▄█▄    ▄████████    ▄████████     ███      ▄██████▄     ▄████████
   ███ ▄███▀   ███    ███   ███    ███ ▀█████████▄ ███    ███   ███    ███
   ███▐██▀     ███    ███   ███    ███    ▀███▀▀██ ███    ███   ███    █▀ 
  ▄█████▀     ▄███▄▄▄▄██▀   ███    ███     ███   ▀ ███    ███   ███       
@@ -8,7 +16,14 @@ export const AsciiTitle = () => {
   ███ ▀███▄   ███    ███   ███    ███     ███     ███    ███    ▄█    ███
   ███   ▀█▀   ███    ███   ███    █▀     ▄████▀    ▀██████▀   ▄████████▀ 
   ▀           ███    ███                                                 `}</text>
-<text fg="orange" position="absolute" zIndex={-1} left={1} top={1} opacity={0.6}>{`   ▄█   ▄█▄    ▄████████    ▄████████     ███      ▄██████▄     ▄████████
+      <text
+        fg={theme?.dark.palette.primary}
+        position="absolute"
+        zIndex={-1}
+        left={1}
+        top={1}
+        opacity={0.6}
+      >{`   ▄█   ▄█▄    ▄████████    ▄████████     ███      ▄██████▄     ▄████████
 ███ ▄███▀   ███    ███   ███    ███ ▀█████████▄ ███    ███   ███    ███
 ███▐██▀     ███    ███   ███    ███    ▀███▀▀██ ███    ███   ███    █▀ 
 ▄█████▀     ▄███▄▄▄▄██▀   ███    ███     ███   ▀ ███    ███   ███       
@@ -17,5 +32,6 @@ export const AsciiTitle = () => {
 ███ ▀███▄   ███    ███   ███    ███     ███     ███    ███    ▄█    ███
 ███   ▀█▀   ███    ███   ███    █▀     ▄████▀    ▀██████▀   ▄████████▀ 
 ▀           ███    ███                                                 `}</text>
-</>
-}
+    </>
+  );
+};

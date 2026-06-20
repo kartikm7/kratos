@@ -1,4 +1,4 @@
-import { DialogProvider } from "@opentui-ui/dialog/react";
+import { DialogProvider, themes } from "@opentui-ui/dialog/react";
 import { toast, Toaster } from "@opentui-ui/toast/react";
 import { RootLayout } from "./components/AppLayout";
 import { Chat } from "./components/Chat/Chat";
@@ -9,6 +9,7 @@ import {
   llmAtom,
   modelsListAtom,
   selectedModelAtom,
+  themeAtom,
 } from "./state/atoms";
 import { createModel, fetchAndCacheModels } from "./utils/models";
 import { readAuth } from "./utils/auth";

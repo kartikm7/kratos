@@ -10,6 +10,8 @@ import { SlashOptions } from "../Slash/mapping";
 import { SlashConnect } from "../Slash/Connect/SlashConnect";
 import { useDialog, useDialogState } from "@opentui-ui/dialog/react";
 import { SlashModel } from "../Slash/Model/SlashModel";
+import { useAtomValue } from "jotai";
+import { themeAtom } from "../../state/atoms";
 
 interface CustomInputProps extends InputProps {
   loading?: boolean;
@@ -29,6 +31,7 @@ export const Input = ({
   const dialog = useDialog();
   const dialogOpen = useDialogState((s) => s.isOpen);
   const ref = useRef<InputRenderable>(null);
+  const theme = useAtomValue(themeAtom);
 
   useEffect(() => {
     if (props.value?.trim().startsWith("/")) {
@@ -114,7 +117,7 @@ export const Input = ({
           selectedIndex={index}
           width={width}
           height={options.length * 2}
-          backgroundColor="dark-grey"
+          backgroundColor={theme.dark.palette.neutral}
         />
       )}
       <box

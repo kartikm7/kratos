@@ -6,15 +6,17 @@ import {
   toolsAtom,
 } from "../state/atoms";
 import {
+  stepCountIs,
   ToolLoopAgent,
   type AssistantModelMessage,
   type ModelMessage,
 } from "ai";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "@opentui-ui/toast/react";
 import { KratosSystemPrompt } from "../utils/prompts";
 import type { AiMessage, MessageStream } from "../state/types";
 import { useKeyboard } from "@opentui/react";
+import { DEFAULT_AGENT_STEP_COUNT } from "../utils/constants";
 
 export const useLlm = () => {
   const llm = useAtomValue(llmAtom);
@@ -65,6 +67,7 @@ export const useLlm = () => {
         model: llm(selectedModel?.id),
         instructions: KratosSystemPrompt,
         tools: tools,
+        stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses
       });
       const result = agent.stream({
         messages: messages,

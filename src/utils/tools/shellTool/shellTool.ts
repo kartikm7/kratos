@@ -11,7 +11,7 @@ export const ShellTool = tool({
   inputSchema: z.object({
     cmd: z.string().meta({
       description:
-        "only these commands are supports ls, find, grep, mkdir, cat",
+        "only these commands are supports pwd, ls, find, grep, mkdir, cat",
     }),
     flags: z.string().optional(),
     regex: z
@@ -23,6 +23,9 @@ export const ShellTool = tool({
   execute: async ({ cmd, flags = "", regex = "", paths }) => {
     let result: any;
     switch (cmd) {
+      case "pwd":
+        result = shell.pwd();
+        break;
       case "ls":
         result = !!flags ? shell.ls(flags, paths) : shell.ls(paths); // this is sleezy, but need to do this
         break;

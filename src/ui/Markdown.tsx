@@ -48,6 +48,14 @@ export const Markdown = ({ content, streaming, ...props }: MarkdownProps) => {
       syntaxStyle={syntaxStyle}
       streaming={streaming}
       internalBlockMode="coalesced"
+      tableOptions={{
+        style: "grid",
+        widthMode: "content",
+        columnFitter: "balanced",
+        wrapMode: "word",
+        borders: true,
+        outerBorder: true,
+      }}
       {...props}
     />
   );

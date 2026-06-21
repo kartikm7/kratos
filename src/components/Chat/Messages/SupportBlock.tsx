@@ -3,6 +3,7 @@ import { capitalise } from "../../../utils/string";
 import { TextAttributes } from "@opentui/core";
 import { useAtomValue } from "jotai";
 import { collapseAtom, themeAtom } from "../../../state/atoms";
+import { Separator } from "../../../ui/Separator";
 
 interface SupportBlockProps extends BoxProps {
   title: string;
@@ -28,11 +29,7 @@ export const SupportBlock = ({
       {!collapse && (
         <>
           <text content={content} fg={theme.dark.palette.ink} opacity={0.75} />
-          <box
-            border={["bottom"]}
-            borderColor={theme.dark.palette.ink}
-            opacity={0.75}
-          />
+          <Separator />
         </>
       )}
     </box>

@@ -1,6 +1,13 @@
 import type { BoxProps } from "@opentui/react";
 import { useAtomValue } from "jotai";
-import { selectedModelAtom, streamAtom, themeAtom } from "../../state/atoms";
+import {
+  chatModeAtom,
+  selectedModelAtom,
+  streamAtom,
+  themeAtom,
+} from "../../state/atoms";
+import { AccentText } from "../../ui/AccentText";
+import { capitalise } from "../../utils/string";
 
 interface DynamicInfoBarProps extends BoxProps {
   loading: boolean;
@@ -13,6 +20,19 @@ export const DynamicInfoBar = ({
   const stream = useAtomValue(streamAtom);
   const selectedModel = useAtomValue(selectedModelAtom);
   const theme = useAtomValue(themeAtom);
+  const chatMode = useAtomValue(chatModeAtom);
+  const modeColor = (() => {
+    switch (chatMode) {
+      case "build":
+        return theme.dark.palette.accent;
+      case "discuss":
+        return theme.dark.palette.info;
+      case "court":
+        return theme.dark.palette.error;
+      default:
+        break;
+    }
+  })();
   return (
     <box
       paddingX={1}
@@ -29,18 +49,16 @@ export const DynamicInfoBar = ({
               color={theme?.dark.palette.primary}
             />
             <text marginLeft={1} fg="grey">
-              Streaming... (esc to cancel)
+              Streaming... (esc to cancel) |
             </text>
           </>
         )}
+        <text bg={modeColor} content={" " + capitalise(chatMode) + " "} />
       </box>
       <box>
-        <text
-          fg={theme?.dark.palette.primary}
-          opacity={selectedModel ? 1 : 0.5}
-        >
+        <AccentText opacity={selectedModel ? 1 : 0.5}>
           {selectedModel?.id || "Model not found (use /model)"}
-        </text>
+        </AccentText>
       </box>
     </box>
   );

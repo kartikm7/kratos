@@ -1,5 +1,6 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import {
+  chatModeAtom,
   llmAtom,
   selectedModelAtom,
   streamAtom,
@@ -10,10 +11,11 @@ import {
   ToolLoopAgent,
   type AssistantModelMessage,
   type ModelMessage,
+  type ToolSet,
 } from "ai";
 import { useRef, useState } from "react";
 import { toast } from "@opentui-ui/toast/react";
-import { KratosSystemPrompt } from "../utils/prompts";
+import { SystemPrompts } from "../utils/prompts";
 import type { AiMessage, MessageStream } from "../state/types";
 import { useKeyboard } from "@opentui/react";
 import { DEFAULT_AGENT_STEP_COUNT } from "../utils/constants";
@@ -21,6 +23,7 @@ import { DEFAULT_AGENT_STEP_COUNT } from "../utils/constants";
 export const useLlm = () => {
   const llm = useAtomValue(llmAtom);
   const selectedModel = useAtomValue(selectedModelAtom);
+  const chatMode = useAtomValue(chatModeAtom);
   const [isLoading, setLoading] = useState(false);
   const setStream = useSetAtom(streamAtom);
   let streamCache: MessageStream = []; // this is irritating the fuck out of me, but there's no choice but to do this
@@ -63,10 +66,11 @@ export const useLlm = () => {
     try {
       setLoading(true);
       if (!llm) throw new Error("Missing LLM");
+      const systemPrompt = SystemPrompts[chatMode];
       const agent = new ToolLoopAgent({
         model: llm(selectedModel?.id),
-        instructions: KratosSystemPrompt,
-        tools: tools,
+        instructions: systemPrompt,
+        tools: tools as ToolSet, // this shit is needed, but fuck it
         stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses
       });
       const result = agent.stream({

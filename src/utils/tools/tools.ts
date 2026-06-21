@@ -7,6 +7,9 @@ import stealth from "puppeteer-extra-plugin-stealth";
 import TurndownService from "turndown";
 import { replaceInFile } from "replace-in-file";
 import { readFile, writeFile, exists } from "fs/promises";
+import { CHAT_MODES, type ChatModes } from "../constants";
+import { ShellTool } from "./shellTool/shellTool";
+import { KnowledgeBaseTool } from "./knowledgeBase/knowledgeBaseTool";
 // import puppeteer from "puppeteer";
 
 // TODO: should add a buffered reader, since large codebases tend to have files with > 500 lines of code making this too large
@@ -104,4 +107,40 @@ const WebBrowserTool = tool({
   },
 });
 
-export { ReadFile, WriteFile, EditFile, SandboxBashTools, WebBrowserTool };
+const getModeSpecificTools = (mode: ChatModes) => {
+  if (!CHAT_MODES.includes(mode)) return {}; // early return
+  switch (mode) {
+    case "build":
+      return {
+        ShellTool,
+        WebBrowserTool,
+        ReadFile,
+        WriteFile,
+        EditFile,
+        KnowledgeBaseTool,
+      };
+    case "discuss":
+      return {
+        ShellTool,
+        WebBrowserTool,
+        KnowledgeBaseTool,
+      };
+    case "court":
+      return {
+        ShellTool,
+        WebBrowserTool,
+        KnowledgeBaseTool,
+      };
+    default:
+      break;
+  }
+};
+
+export {
+  ReadFile,
+  WriteFile,
+  EditFile,
+  SandboxBashTools,
+  WebBrowserTool,
+  getModeSpecificTools,
+};

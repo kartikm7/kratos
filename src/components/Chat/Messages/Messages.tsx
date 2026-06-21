@@ -3,15 +3,12 @@ import { Markdown } from "../../../ui/Markdown";
 import { useTerminalDimensions } from "@opentui/react";
 import type {
   ReasoningPart,
-  ToolApprovalRequest,
   ToolCallPart,
   ToolResultPart,
 } from "@ai-sdk/provider-utils";
-import { TextAttributes } from "@opentui/core";
-import { useEffect } from "react";
-import { capitalise } from "../../../utils/string";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "../../../state/atoms";
+import { SupportBlock } from "./SupportBlock";
 
 type MessagesProps = {
   messages: ModelMessage[];
@@ -72,16 +69,11 @@ function MessageFactory({
           switch (inner.type) {
             case "reasoning":
               return (
-                <box border={["left"]} paddingX={1} key={innerIdx}>
-                  <text attributes={TextAttributes.ITALIC | TextAttributes.DIM}>
-                    {inner.type}
-                  </text>
-                  <Markdown
-                    content={inner.text}
-                    streaming={streaming}
-                    width={width}
-                  />
-                </box>
+                <SupportBlock
+                  title={inner.type}
+                  content={inner.text}
+                  key={innerIdx}
+                />
               );
             case "text":
               return (
@@ -104,16 +96,15 @@ function MessageFactory({
             //   );
             case "tool-result":
               return (
-                <box border={["left"]} paddingX={1} key={innerIdx}>
-                  <text attributes={TextAttributes.ITALIC | TextAttributes.DIM}>
-                    {capitalise(inner.toolName)}
-                  </text>
-                  <text>
-                    {typeof inner.output == "string"
+                <SupportBlock
+                  title={inner.toolName}
+                  content={
+                    typeof inner.output == "string"
                       ? inner.output
-                      : JSON.stringify(inner.output)}
-                  </text>
-                </box>
+                      : JSON.stringify(inner.output)
+                  }
+                  key={innerIdx}
+                />
               );
             default:
               break;

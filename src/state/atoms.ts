@@ -23,6 +23,7 @@ export const selectedModelAtom = atom<Model>();
 export const modelsListAtom = atom<ModelsList | null>(null);
 export const connectedProvidersAtom = atom<ConnectedProvidersList>();
 export const themeAtom = atom<Theme>(kratosTheme);
+export const collapseAtom = atom<boolean>(true);
 
 export const toolsAtom = atom({
   ShellTool,

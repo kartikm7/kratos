@@ -49,7 +49,6 @@ export const Chat = () => {
                 streaming
               />
             )}
-            {/* <Markdown content={stream} streaming width={width} /> */}
           </scrollbox>
         ) : (
           <box justifyContent="center" alignItems="center" gap={2}>

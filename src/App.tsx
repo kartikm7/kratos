@@ -1,26 +1,35 @@
-import { DialogProvider, themes } from "@opentui-ui/dialog/react";
+import { DialogProvider } from "@opentui-ui/dialog/react";
 import { toast, Toaster } from "@opentui-ui/toast/react";
 import { RootLayout } from "./components/AppLayout";
 import { Chat } from "./components/Chat/Chat";
 import { useEffect } from "react";
 import { useSetAtom } from "jotai";
 import {
+  collapseAtom,
   connectedProvidersAtom,
   llmAtom,
   modelsListAtom,
   selectedModelAtom,
-  themeAtom,
 } from "./state/atoms";
 import { createModel, fetchAndCacheModels } from "./utils/models";
 import { readAuth } from "./utils/auth";
 import { readSelectedModel } from "./utils/preferences";
 import type { Model } from "./state/types";
+import { useKeyboard } from "@opentui/react";
 
 export default function App() {
   const setModelsList = useSetAtom(modelsListAtom);
   const setConnectedProvidersList = useSetAtom(connectedProvidersAtom);
   const setSelectedModel = useSetAtom(selectedModelAtom);
   const setLlm = useSetAtom(llmAtom);
+  const setCollapse = useSetAtom(collapseAtom);
+
+  // Global shortcut's to be defined here!
+  useKeyboard((key) => {
+    if (key.ctrl && key.name == "o") {
+      setCollapse((pre) => !pre);
+    }
+  });
 
   useEffect(() => {
     fetchAndSetModelsList();

@@ -2,10 +2,9 @@ import axios from "axios";
 import path from "path";
 import fs from "fs";
 import { AppDirectory, makeAppDir } from "./os";
-import type { ConnectedProvidersList, ModelsList } from "../state/types";
-import { OLLAMA_PROVIDER, ollamaModelsList } from "./ollama";
-import { toast } from "@opentui-ui/toast/react";
 import type { ConnectedProvidersList, Model } from "../state/types";
+import { toast } from "@opentui-ui/toast/react";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 
 const location = path.join(AppDirectory, "models.json");
 
@@ -66,7 +65,14 @@ async function createModel(
     return;
   }
   const auth = connectedProviders[providerName];
-  const model = createModel({ apiKey: auth?.key });
+  const model =
+    auth?.type == "local"
+      ? createOpenAICompatible({
+          name: "local",
+          baseURL: auth.baseUrl,
+          includeUsage: true,
+        })
+      : createModel({ apiKey: auth?.key || "" });
   return model;
 }
 
@@ -76,7 +82,5 @@ export {
   modelsCached,
   cachedModels,
   fetchAndCacheModels,
-  parseModelsList,
-  hydrateLocalModels,
   createModel,
 };

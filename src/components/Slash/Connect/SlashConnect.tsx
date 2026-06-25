@@ -3,43 +3,45 @@ import { useState } from "react";
 import { saveProviderConfig } from "../../../utils/auth";
 import { Combobox } from "../../../ui/Combobox";
 import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
-import {
-  connectedProvidersAtom,
-  modelsListAtom,
-} from "../../../state/atoms";
+import { connectedProvidersAtom, modelsListAtom } from "../../../state/atoms";
 import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
 import { toast } from "@opentui-ui/toast/react";
-import {
-  DEFAULT_OLLAMA_BASE_URL,
-  OLLAMA_PROVIDER,
-  normalizeOllamaBaseUrl,
-  ollamaModelsList,
-  testOllamaConnection,
-} from "../../../utils/ollama";
+import { LOCAL_PROVIDER } from "../../../utils/constants";
+import type { ConnectedProvider } from "../../../state/types";
 
 const SlashConnectDialog = () => {
   const [text, setText] = useState("");
-  const [baseUrl, setBaseUrl] = useState(DEFAULT_OLLAMA_BASE_URL);
   const list = useAtomValue(modelsListAtom);
   const setConnectedProviders = useSetAtom(connectedProvidersAtom);
-  const setModelsList = useSetAtom(modelsListAtom);
-  const [comboboxValue, setComboboxValue] = useState<SelectOption | undefined>();
+  const [comboboxValue, setComboboxValue] = useState<
+    SelectOption | undefined
+  >();
   const dialog = useDialog();
+
+  const updatePersistedState = (
+    provider: string,
+    config: ConnectedProvider,
+  ) => {
+    saveProviderConfig(provider, config);
+    setConnectedProviders((prev) => ({
+      ...(prev ?? {}),
+      [provider]: config,
+    }));
+  };
 
   const providerOptions = [
     {
-      name: "ollama",
-      value: "ollama",
-      description: "local models via Ollama",
+      name: `${LOCAL_PROVIDER} (llamacpp, ollama, lm studio, etc)`,
+      value: LOCAL_PROVIDER,
+      description:
+        "Use your llamacpp, ollama, lm studio open ai compatible endpoints",
     },
-    ...Object.entries(list ?? {})
-      .filter(([providerName]) => providerName !== OLLAMA_PROVIDER)
-      .map(([providerName]) => ({
-        name: providerName,
-        value: providerName,
-        description: "",
-      })),
+    ...Object.entries(list ?? {}).map(([providerName]) => ({
+      name: providerName,
+      value: providerName,
+      description: "",
+    })),
   ];
 
   const handleSubmit = async () => {
@@ -49,50 +51,36 @@ const SlashConnectDialog = () => {
         return;
       }
 
-      if (comboboxValue.name === OLLAMA_PROVIDER) {
-        const normalizedBaseUrl = normalizeOllamaBaseUrl(baseUrl);
-        await testOllamaConnection(normalizedBaseUrl);
-        saveProviderConfig(OLLAMA_PROVIDER, {
-          type: "local",
-          provider: "ollama",
-          baseUrl: normalizedBaseUrl,
-        });
-        setConnectedProviders((prev) => ({
-          ...(prev ?? {}),
-          [OLLAMA_PROVIDER]: {
-            type: "local",
-            provider: "ollama",
-            baseUrl: normalizedBaseUrl,
-          },
-        }));
-        const ollamaModels = await ollamaModelsList(normalizedBaseUrl);
-        setModelsList((prev) => ({
-          ...(prev ?? {}),
-          ...ollamaModels,
-        }));
-        dialog.closeAll();
-        toast.success("Ollama has connected big man!");
-        return;
-      }
-
       if (!text.trim()) {
         toast.error("API key is missing");
         return;
       }
 
-      saveProviderConfig(comboboxValue.name, {
-        type: "api",
-        key: text,
-      });
-      setConnectedProviders((prev) => ({
-        ...(prev ?? {}),
-        [comboboxValue.name]: {
+      const isLocalProvider = comboboxValue.value === LOCAL_PROVIDER;
+      const provider = comboboxValue.value;
+      let config: ConnectedProvider;
+
+      // I wish this didn't need to be written like this for the lsp to understand
+      if (isLocalProvider) {
+        config = {
+          type: LOCAL_PROVIDER,
+          provider: LOCAL_PROVIDER,
+          baseUrl: text,
+        };
+      } else {
+        config = {
           type: "api",
           key: text,
-        },
-      }));
+        };
+      }
+
+      updatePersistedState(provider, config);
+
+      const message = isLocalProvider
+        ? "Welcome to the PC master race big man!"
+        : `${comboboxValue.value} api key has been added!`;
+      toast.success(message);
       dialog.closeAll();
-      toast.success(`${comboboxValue.value} api key has been added!`);
     } catch (error) {
       toast.error(`Something went wrong ${error}`);
       console.log("Something went wrong", error);
@@ -104,8 +92,8 @@ const SlashConnectDialog = () => {
       <DialogHeader>
         {!comboboxValue
           ? "Choose a model provider"
-          : comboboxValue.name === OLLAMA_PROVIDER
-            ? "Enter your Ollama base URL"
+          : comboboxValue.value === LOCAL_PROVIDER
+            ? "Enter your local provider base URL"
             : "Enter your API key"}
       </DialogHeader>
       {!comboboxValue ? (
@@ -114,23 +102,12 @@ const SlashConnectDialog = () => {
           placeholder="Model provider"
           options={providerOptions}
         />
-      ) : comboboxValue.name === OLLAMA_PROVIDER ? (
-        <>
-          <input
-            placeholder="Ollama base URL"
-            onSubmit={handleSubmit}
-            onInput={setBaseUrl}
-            value={baseUrl}
-            focused
-          />
-          <text>
-            enter <span style={{ fg: "grey" }}>submit</span>
-          </text>
-        </>
       ) : (
         <>
           <input
-            placeholder="API key"
+            placeholder={
+              comboboxValue.value === LOCAL_PROVIDER ? "base url" : "api key"
+            }
             onSubmit={handleSubmit}
             onInput={setText}
             value={text}

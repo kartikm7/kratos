@@ -62,7 +62,7 @@ type ApiConnectedProvider = {
 
 type LocalConnectedProvider = {
   type: "local";
-  provider: "ollama";
+  provider: string;
   baseUrl: string;
 };
 

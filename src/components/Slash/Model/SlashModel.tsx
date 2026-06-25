@@ -13,6 +13,7 @@ import type { SelectOption } from "@opentui/core";
 import { toast } from "@opentui-ui/toast/react";
 import type { Model, ModelsList } from "../../../state/types";
 import { createModel } from "../../../utils/models";
+import { LOCAL_MODEL, LOCAL_PROVIDER } from "../../../utils/constants";
 
 // list based on connectedProviders
 const SlashModelDialog = () => {
@@ -37,13 +38,20 @@ const SlashModelDialog = () => {
       });
     }
   });
-  const options = availableModels.map((val) => {
-    return {
-      name: val.name,
-      value: val,
-      description: val.providerInfo?.name || "",
-    };
-  });
+  const options = [
+    {
+      name: "Local Model",
+      value: { name: LOCAL_MODEL },
+      description: "models served via llamacpp, ollama, etc.",
+    },
+    ...availableModels.map((val) => {
+      return {
+        name: val.name,
+        value: val,
+        description: val.providerInfo?.name || "",
+      };
+    }),
+  ];
 
   const handleSubmit = async (comboxboxValue: SelectOption | undefined) => {
     try {

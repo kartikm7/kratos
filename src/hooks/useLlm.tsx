@@ -68,7 +68,7 @@ export const useLlm = () => {
       if (!llm) throw new Error("Missing LLM");
       const systemPrompt = SystemPrompts[chatMode];
       const agent = new ToolLoopAgent({
-        model: llm(selectedModel?.id),
+        model: llm("unsloth/Qwen3.5-2B-MTP-GGUF:Q4_K_M"),
         instructions: systemPrompt,
         tools: tools as ToolSet, // this shit is needed, but fuck it
         stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses

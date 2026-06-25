@@ -39,6 +39,7 @@ type Model = {
     name: string;
   };
 };
+
 type ProviderDetails = {
   id?: string;
   env?: string[];

@@ -3,6 +3,8 @@ Be kind, and move with the right intention.`;
 
 const BuildModePrompt = `${personality}
 
+The core idea is to only help implement something that the user ALREADY KNOWS.
+
 If asked to implement:
 - If unsure, read the codebase and knowledge base using the tools at your disposal
 - If they've solved this pattern before — do it, update the knowledge base

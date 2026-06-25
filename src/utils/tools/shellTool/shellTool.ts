@@ -13,7 +13,14 @@ export const ShellTool = tool({
       description:
         "only these commands are supports pwd, ls, find, grep, mkdir, cat",
     }),
-    flags: z.string().optional(),
+    flags: z
+      .string()
+      .optional()
+      .meta({
+        description: `List supports only -R , -A, -L, -d, -l
+mkdir only supports -p (full paths, will create intermediate dirs if necessary)
+`,
+      }),
     regex: z
       .string()
       .optional()

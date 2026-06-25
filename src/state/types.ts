@@ -44,15 +44,28 @@ type ModelsList = {
 };
 
 type ConnectedProvidersList = {
-  [key: string]: {
-    key: string;
-    type: "api";
-  };
+  [key: string]: ConnectedProvider;
 };
+
+type ApiConnectedProvider = {
+  type: "api";
+  key: string;
+};
+
+type LocalConnectedProvider = {
+  type: "local";
+  provider: "ollama";
+  baseUrl: string;
+};
+
+type ConnectedProvider = ApiConnectedProvider | LocalConnectedProvider;
 
 export {
   type Model,
   type ProviderDetails,
   type ModelsList,
   type ConnectedProvidersList,
+  type ConnectedProvider,
+  type ApiConnectedProvider,
+  type LocalConnectedProvider,
 };

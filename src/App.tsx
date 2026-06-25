@@ -5,7 +5,11 @@ import { Chat } from "./components/Chat/Chat";
 import { useEffect } from "react";
 import { useSetAtom } from "jotai";
 import { connectedProvidersAtom, modelsListAtom } from "./state/atoms";
-import { fetchAndCacheModels } from "./utils/models";
+import {
+  fetchAndCacheModels,
+  hydrateLocalModels,
+  parseModelsList,
+} from "./utils/models";
 import { readAuth } from "./utils/auth";
 
 export default function App() {
@@ -13,13 +17,21 @@ export default function App() {
   const setConnectedProvidersList = useSetAtom(connectedProvidersAtom);
 
   useEffect(() => {
+    const savedProviders = readAuth();
+    setConnectedProvidersList(savedProviders);
     fetchAndSetModelsList();
-    setConnectedProvidersList(readAuth()); // this is just getting data for whatever models we currently have
 
     async function fetchAndSetModelsList() {
       const res = await fetchAndCacheModels();
       if (!res) toast.error("Model list is empty");
-      else setModelsList(JSON.parse(JSON.parse(res))); // this is so fucking weird
+      else {
+        const remoteModels = parseModelsList(res);
+        const hydratedModels = await hydrateLocalModels(
+          remoteModels,
+          savedProviders,
+        );
+        setModelsList(hydratedModels);
+      }
     }
   }, []);
 

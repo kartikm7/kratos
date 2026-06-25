@@ -11,7 +11,10 @@ import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
 import { toast } from "@opentui-ui/toast/react";
 import type { Model, ModelsList } from "../../../state/types";
-import { create } from "axios";
+import {
+  createOllamaProvider,
+  OLLAMA_PROVIDER,
+} from "../../../utils/ollama";
 
 // list based on connectedProviders
 const SlashModelDialog = () => {
@@ -51,14 +54,27 @@ const SlashModelDialog = () => {
         return; // early return
       }
       const selectedModel = comboxboxValue.value as Model;
-      const pkg = await import(`${selectedModel.providerInfo?.npm}`);
-      if (!pkg) {
-        toast.error("Could not import model package");
-        return;
-      }
       const providerName = selectedModel.providerInfo?.name;
       if (!providerName) {
         toast.error("Provider name is missing");
+        return;
+      }
+      if (providerName === OLLAMA_PROVIDER) {
+        const auth = connectedProviders?.[providerName];
+        if (!auth || auth.type !== "local") {
+          toast.error("Ollama connection is missing");
+          return;
+        }
+        setLlm(() => createOllamaProvider(auth.baseUrl));
+        setSelectedModel(selectedModel);
+        toast.success(`Set ${selectedModel.name} as the default model!`);
+        dialog.closeAll();
+        return;
+      }
+
+      const pkg = await import(`${selectedModel.providerInfo?.npm}`);
+      if (!pkg) {
+        toast.error("Could not import model package");
         return;
       }
 
@@ -76,6 +92,10 @@ const SlashModelDialog = () => {
         return;
       }
       const auth = connectedProviders[providerName];
+      if (!auth || auth.type !== "api") {
+        toast.error("Provider auth is missing");
+        return;
+      }
       const model = createModel({ apiKey: auth?.key });
       console.log("inside slash", model);
       setLlm(() => model); // created Model object

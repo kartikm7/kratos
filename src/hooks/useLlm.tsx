@@ -5,10 +5,12 @@ import {
   streamAtom,
   toolsAtom,
 } from "../state/atoms";
-import { ToolLoopAgent, type ModelMessage } from "ai";
+import {
+  ToolLoopAgent,
+  type ModelMessage,
+} from "ai";
 import { useState } from "react";
 import { toast } from "@opentui-ui/toast/react";
-import { KratosSystemPrompt } from "../utils/prompts";
 
 export const useLlm = () => {
   const llm = useAtomValue(llmAtom);

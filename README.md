@@ -1,5 +1,7 @@
 # Kratos
 
+<img width="933" height="370" alt="Image" src="https://github.com/user-attachments/assets/c9429282-213b-40e3-baec-a8e10b2ec0b2" />
+
 An agentic coding workflow that actually aims to assist you and not replace you.
 
 ## Why Kratos?

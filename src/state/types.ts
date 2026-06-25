@@ -1,3 +1,11 @@
+import type {
+  FilePart,
+  ReasoningUIPart,
+  TextPart,
+  ToolCallPart,
+  ToolResultPart,
+} from "ai";
+
 type Model = {
   id: string;
   name: string;
@@ -59,6 +67,13 @@ type LocalConnectedProvider = {
 };
 
 type ConnectedProvider = ApiConnectedProvider | LocalConnectedProvider;
+type AiMessage =
+  | TextPart
+  | FilePart
+  | ReasoningUIPart
+  | ToolCallPart
+  | ToolResultPart;
+type MessageStream = Array<AiMessage>;
 
 export {
   type Model,
@@ -68,4 +83,6 @@ export {
   type ConnectedProvider,
   type ApiConnectedProvider,
   type LocalConnectedProvider,
+  type AiMessage,
+  type MessageStream,
 };

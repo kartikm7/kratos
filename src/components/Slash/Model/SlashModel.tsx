@@ -7,14 +7,12 @@ import {
   modelsListAtom,
   selectedModelAtom,
 } from "../../../state/atoms";
+import { saveSelectedModel } from "../../../utils/preferences";
 import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
 import { toast } from "@opentui-ui/toast/react";
 import type { Model, ModelsList } from "../../../state/types";
-import {
-  createOllamaProvider,
-  OLLAMA_PROVIDER,
-} from "../../../utils/ollama";
+import { createModel } from "../../../utils/models";
 
 // list based on connectedProviders
 const SlashModelDialog = () => {
@@ -54,52 +52,11 @@ const SlashModelDialog = () => {
         return; // early return
       }
       const selectedModel = comboxboxValue.value as Model;
-      const providerName = selectedModel.providerInfo?.name;
-      if (!providerName) {
-        toast.error("Provider name is missing");
-        return;
-      }
-      if (providerName === OLLAMA_PROVIDER) {
-        const auth = connectedProviders?.[providerName];
-        if (!auth || auth.type !== "local") {
-          toast.error("Ollama connection is missing");
-          return;
-        }
-        setLlm(() => createOllamaProvider(auth.baseUrl));
-        setSelectedModel(selectedModel);
-        toast.success(`Set ${selectedModel.name} as the default model!`);
-        dialog.closeAll();
-        return;
-      }
-
-      const pkg = await import(`${selectedModel.providerInfo?.npm}`);
-      if (!pkg) {
-        toast.error("Could not import model package");
-        return;
-      }
-
-      const mostlyFunctionName = `create${providerName[0]?.toUpperCase() + providerName.slice(1)}`;
-      let createModel = pkg[mostlyFunctionName];
-      if (!createModel) {
-        // dynamically finding
-        const dynamicModuleName = Object.keys(pkg).find((val) =>
-          val.includes(mostlyFunctionName),
-        );
-        createModel = pkg[dynamicModuleName || ""];
-      }
-      if (!connectedProviders) {
-        toast.error("Connected providers is empty");
-        return;
-      }
-      const auth = connectedProviders[providerName];
-      if (!auth || auth.type !== "api") {
-        toast.error("Provider auth is missing");
-        return;
-      }
-      const model = createModel({ apiKey: auth?.key });
+      const model = createModel(selectedModel, connectedProviders || {});
       console.log("inside slash", model);
       setLlm(() => model); // created Model object
       setSelectedModel(selectedModel);
+      saveSelectedModel(selectedModel);
       toast.success(`Set ${selectedModel.name} as the default model!`);
       dialog.closeAll();
     } catch (error) {

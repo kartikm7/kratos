@@ -1,19 +1,42 @@
-import { useTerminalDimensions } from "@opentui/react";
+import { useKeyboard, useTerminalDimensions } from "@opentui/react";
 import { ChatLayout } from "../AppLayout";
 import { Input } from "./Input";
 import { type ModelMessage, type UserModelMessage } from "ai";
 import { useState } from "react";
-import { streamAtom } from "../../state/atoms";
-import { useAtomValue } from "jotai";
+import { chatModeAtom, streamAtom, toolsAtom } from "../../state/atoms";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useLlm } from "../../hooks/useLlm";
 import { Messages } from "./Messages/Messages";
+import { AsciiTitle } from "./AsciiTitle";
+import { DynamicInfoBar } from "./DynamicInfoBar";
+import { CHAT_MODES, type ChatModes } from "../../utils/constants";
+import { getModeSpecificTools } from "../../utils/tools/tools";
 
 export const Chat = () => {
-  const { width, height } = useTerminalDimensions();
+  const { height } = useTerminalDimensions();
   const [text, setText] = useState("");
   const stream = useAtomValue(streamAtom);
   const [messages, setMessages] = useState<ModelMessage[]>([]);
   const { isLoading, generate } = useLlm();
+  const [chatMode, setChatMode] = useAtom(chatModeAtom);
+  const setTools = useSetAtom(toolsAtom);
+
+  useKeyboard((key) => {
+    if (key.shift && key.name == "tab") {
+      // finding the current idx
+      const idx = CHAT_MODES.findIndex((val) => {
+        return val == chatMode;
+      });
+      // normalizing the next idx
+      let nextIdx = Math.min(idx + 1, CHAT_MODES.length);
+      nextIdx = nextIdx == CHAT_MODES.length ? 0 : nextIdx;
+      // indexing the next mode
+      const nextMode = CHAT_MODES[nextIdx] as ChatModes; // this is so fucking stupid, but need to do this since the above code is determined
+      // updating global states
+      setChatMode(nextMode);
+      setTools(getModeSpecificTools(nextMode));
+    }
+  });
 
   const handleSubmit = async () => {
     if (text.trim().length != 0) {
@@ -33,15 +56,27 @@ export const Chat = () => {
   return (
     <ChatLayout>
       <box
-        height={height * 0.7}
+        height={height * 0.85}
         justifyContent="center"
         alignItems="center"
         gap={0.5}
       >
-        <scrollbox stickyScroll={true} stickyStart="bottom">
-          <Messages messages={messages} />
-          {/* <Markdown content={stream} streaming width={width} /> */}
-        </scrollbox>
+        {messages.length > 0 ? (
+          <scrollbox stickyScroll={true} stickyStart="bottom">
+            <Messages messages={messages} />
+            {stream && (
+              <Messages
+                messages={[{ role: "assistant", content: stream }]}
+                streaming
+              />
+            )}
+          </scrollbox>
+        ) : (
+          <box justifyContent="center" alignItems="center" gap={2}>
+            <AsciiTitle />
+            <text>Aims to assist, not replace you.</text>
+          </box>
+        )}
       </box>
       <box alignItems="flex-start">
         <Input
@@ -50,6 +85,7 @@ export const Chat = () => {
           value={text}
           loading={isLoading}
         />
+        <DynamicInfoBar loading={isLoading} />
       </box>
     </ChatLayout>
   );

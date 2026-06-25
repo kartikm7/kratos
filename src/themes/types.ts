@@ -1,0 +1,84 @@
+export type Theme = {
+  name: string;
+  id: string;
+  light: {
+    palette: {
+      neutral: string;
+      ink: string;
+      primary: string;
+      accent: string;
+      success: string;
+      warning: string;
+      error: string;
+      info: string;
+    };
+    overrides: {
+      "text-weak": string;
+      "syntax-comment": string;
+      "syntax-keyword": string;
+      "syntax-string": string;
+      "syntax-primitive": string;
+      "syntax-variable": string;
+      "syntax-property": string;
+      "syntax-type": string;
+      "syntax-constant": string;
+      "syntax-operator": string;
+      "syntax-punctuation": string;
+      "syntax-object": string;
+      "markdown-heading": string;
+      "markdown-text": string;
+      "markdown-link": string;
+      "markdown-link-text": string;
+      "markdown-code": string;
+      "markdown-block-quote": string;
+      "markdown-emph": string;
+      "markdown-strong": string;
+      "markdown-horizontal-rule": string;
+      "markdown-list-item": string;
+      "markdown-list-enumeration": string;
+      "markdown-image": string;
+      "markdown-image-text": string;
+      "markdown-code-block": string;
+    };
+  };
+  dark: {
+    palette: {
+      neutral: string;
+      ink: string;
+      primary: string;
+      accent: string;
+      success: string;
+      warning: string;
+      error: string;
+      info: string;
+    };
+    overrides: {
+      "text-weak": string;
+      "syntax-comment": string;
+      "syntax-keyword": string;
+      "syntax-string": string;
+      "syntax-primitive": string;
+      "syntax-variable": string;
+      "syntax-property": string;
+      "syntax-type": string;
+      "syntax-constant": string;
+      "syntax-operator": string;
+      "syntax-punctuation": string;
+      "syntax-object": string;
+      "markdown-heading": string;
+      "markdown-text": string;
+      "markdown-link": string;
+      "markdown-link-text": string;
+      "markdown-code": string;
+      "markdown-block-quote": string;
+      "markdown-emph": string;
+      "markdown-strong": string;
+      "markdown-horizontal-rule": string;
+      "markdown-list-item": string;
+      "markdown-list-enumeration": string;
+      "markdown-image": string;
+      "markdown-image-text": string;
+      "markdown-code-block": string;
+    };
+  };
+};

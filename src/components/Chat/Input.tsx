@@ -10,6 +10,8 @@ import { SlashOptions } from "../Slash/mapping";
 import { SlashConnect } from "../Slash/Connect/SlashConnect";
 import { useDialog, useDialogState } from "@opentui-ui/dialog/react";
 import { SlashModel } from "../Slash/Model/SlashModel";
+import { useAtomValue } from "jotai";
+import { themeAtom } from "../../state/atoms";
 
 interface CustomInputProps extends InputProps {
   loading?: boolean;
@@ -29,6 +31,7 @@ export const Input = ({
   const dialog = useDialog();
   const dialogOpen = useDialogState((s) => s.isOpen);
   const ref = useRef<InputRenderable>(null);
+  const theme = useAtomValue(themeAtom);
 
   useEffect(() => {
     if (props.value?.trim().startsWith("/")) {
@@ -104,13 +107,17 @@ export const Input = ({
   };
 
   return (
-    <box flexDirection="column" columnGap={2}>
+    <box flexDirection="column" columnGap={2} position="relative">
       {autocomplete && isSlashTriggered && (
         <select
+          position="absolute"
+          bottom="100%"
+          zIndex={1}
           options={options}
           selectedIndex={index}
           width={width}
           height={options.length * 2}
+          backgroundColor={theme.dark.palette.neutral}
         />
       )}
       <box
@@ -120,7 +127,6 @@ export const Input = ({
         width={width}
         paddingX={1}
       >
-        {loading ? <spinner name="dots" /> : <></>}
         <input ref={ref} placeholder={placeholder} focused={true} {...props} />
       </box>
     </box>

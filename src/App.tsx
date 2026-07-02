@@ -61,7 +61,7 @@ export default function App() {
   return (
     <>
       <Toaster position="top-right" />
-      <DialogProvider>
+      <DialogProvider backdropOpacity={0}>
         <RootLayout>
           <Chat />
         </RootLayout>

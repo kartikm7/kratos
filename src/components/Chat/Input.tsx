@@ -12,6 +12,7 @@ import { useDialog, useDialogState } from "@opentui-ui/dialog/react";
 import { SlashModel } from "../Slash/Model/SlashModel";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "../../state/atoms";
+import { Select } from "../../ui/Select";
 
 interface CustomInputProps extends InputProps {
   loading?: boolean;
@@ -109,7 +110,7 @@ export const Input = ({
   return (
     <box flexDirection="column" columnGap={2} position="relative">
       {autocomplete && isSlashTriggered && (
-        <select
+        <Select
           position="absolute"
           bottom="100%"
           zIndex={1}

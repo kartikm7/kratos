@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import type { SelectOption } from "@opentui/core";
+import { type SelectOption } from "@opentui/core";
 import {
   useKeyboard,
   useTerminalDimensions,
   type BoxProps,
 } from "@opentui/react";
+import { Select } from "./Select";
 
 export interface ComboboxProps extends BoxProps {
   placeholder?: string;
@@ -64,7 +65,7 @@ export const Combobox = ({
         placeholder={placeholder}
         focused={true}
       />
-      <select
+      <Select
         height="100%"
         options={list}
         showDescription={showDescription}

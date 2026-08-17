@@ -3,7 +3,7 @@ import { ChatLayout } from "../AppLayout";
 import { Input } from "./Input";
 import { type ModelMessage, type UserModelMessage } from "ai";
 import { useState } from "react";
-import { chatModeAtom, streamAtom, toolsAtom } from "../../state/atoms";
+import { chatModeAtom, messagesAtom, streamAtom, toolsAtom } from "../../state/atoms";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useLlm } from "../../hooks/useLlm";
 import { Messages } from "./Messages/Messages";
@@ -16,7 +16,7 @@ export const Chat = () => {
   const { height } = useTerminalDimensions();
   const [text, setText] = useState("");
   const stream = useAtomValue(streamAtom);
-  const [messages, setMessages] = useState<ModelMessage[]>([]);
+  const [messages, setMessages] = useAtom(messagesAtom);
   const { isLoading, generate } = useLlm();
   const [chatMode, setChatMode] = useAtom(chatModeAtom);
   const setTools = useSetAtom(toolsAtom);
@@ -39,7 +39,13 @@ export const Chat = () => {
   });
 
   const handleSubmit = async () => {
-    if (text.trim().length != 0) {
+    const empty = text.trim().length == 0
+    const slashCommand = text.trim().charAt(0) == "/"
+    // TODO: the moment we introduce prompts that can be accessed via this, we are fucked
+    // all I'm saying is this is not intuitive nor is it scalable, not intuitive because the same check is maintained in two functions
+    // but who cares, if it works it works
+    console.log(!empty && !slashCommand)
+    if (!empty && !slashCommand) {
       const prompt: UserModelMessage = { role: "user", content: text };
       const history = [...messages, prompt];
       setMessages(history);

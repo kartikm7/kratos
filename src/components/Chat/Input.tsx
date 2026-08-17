@@ -10,8 +10,8 @@ import { SlashOptions } from "../Slash/mapping";
 import { SlashConnect } from "../Slash/Connect/SlashConnect";
 import { useDialog, useDialogState } from "@opentui-ui/dialog/react";
 import { SlashModel } from "../Slash/Model/SlashModel";
-import { useAtomValue } from "jotai";
-import { themeAtom } from "../../state/atoms";
+import { useAtomValue, useSetAtom } from "jotai";
+import { messagesAtom, themeAtom } from "../../state/atoms";
 import { Select } from "../../ui/Select";
 
 interface CustomInputProps extends InputProps {
@@ -33,6 +33,7 @@ export const Input = ({
   const dialogOpen = useDialogState((s) => s.isOpen);
   const ref = useRef<InputRenderable>(null);
   const theme = useAtomValue(themeAtom);
+  const setMessages = useSetAtom(messagesAtom)
 
   useEffect(() => {
     if (props.value?.trim().startsWith("/")) {
@@ -76,7 +77,7 @@ export const Input = ({
       case "return":
         // this is actually the submit state
         if (isSlashTriggered) {
-          props.onSubmit = () => {}; // because we can't submit an empty function?
+          props.onSubmit = () => { }; // because we can't submit an empty function?
           handleSelectionSubmit();
         }
         break;
@@ -101,6 +102,9 @@ export const Input = ({
         break;
       case "/model":
         SlashModel(dialog);
+        break;
+      case "/clear":
+        setMessages([])
         break;
       default:
         break;

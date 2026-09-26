@@ -9,7 +9,7 @@ import { replaceInFile } from "replace-in-file";
 import { readFile, writeFile, exists } from "fs/promises";
 import { CHAT_MODES, type ChatModes } from "../constants";
 import { ShellTool } from "./shellTool/shellTool";
-import { KnowledgeBaseTool } from "./knowledgeBase/knowledgeBaseTool";
+import { WriteToGlobalMemory } from "./knowledgeBase/knowledgeBaseTool";
 // import puppeteer from "puppeteer";
 
 // TODO: should add a buffered reader, since large codebases tend to have files with > 500 lines of code making this too large
@@ -117,19 +117,19 @@ const getModeSpecificTools = (mode: ChatModes) => {
         ReadFile,
         WriteFile,
         EditFile,
-        KnowledgeBaseTool,
+        WriteToGlobalMemory,
       };
     case "discuss":
       return {
         ShellTool,
         WebBrowserTool,
-        KnowledgeBaseTool,
+        WriteToGlobalMemory,
       };
     case "court":
       return {
         ShellTool,
         WebBrowserTool,
-        KnowledgeBaseTool,
+        WriteToGlobalMemory,
       };
     default:
       break;

@@ -6,14 +6,8 @@ import {
   type ModelsList,
 } from "./types";
 import {
-  ReadFile,
-  EditFile,
-  WriteFile,
-  WebBrowserTool,
   getModeSpecificTools,
 } from "../utils/tools/tools";
-import { KnowledgeBaseTool } from "../utils/tools/knowledgeBase/knowledgeBaseTool";
-import { ShellTool } from "../utils/tools/shellTool/shellTool";
 import type { Theme } from "../themes/types";
 import kratosTheme from "../themes/variants/kratos.json" with { type: "json" };
 import type { ChatModes } from "../utils/constants";

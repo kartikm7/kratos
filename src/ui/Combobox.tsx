@@ -55,6 +55,8 @@ export const Combobox = ({
         );
       }),
     );
+
+    return () => { setList([]) }
   }, [text]);
 
   return (

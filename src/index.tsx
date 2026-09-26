@@ -3,6 +3,8 @@ import { createRoot, useKeyboard } from "@opentui/react";
 import App from "./App";
 
 function Main() {
+  // this is really helpful for figuring out what is propogating the memory leak
+  process.on('warning', e => console.warn(e.stack));
   useKeyboard((key) => {
     if (key.name == "f12") renderer.console.toggle();
   });

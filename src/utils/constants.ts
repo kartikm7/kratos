@@ -1,4 +1,10 @@
+import { AppDirectory } from "./os";
+import path from "path"
+
 export const MAX_TOOLS_TOKEN = 10000;
 export const DEFAULT_AGENT_STEP_COUNT = 100; // this should be sufficient I believe, can always increase this
 export const CHAT_MODES = ["build", "discuss", "court"];
 export type ChatModes = "build" | "discuss" | "court";
+
+// Some common paths
+export const MemoriesPath = path.join(AppDirectory, "Memories")

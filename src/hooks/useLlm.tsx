@@ -4,7 +4,7 @@ import {
   llmAtom,
   selectedModelAtom,
   streamAtom,
-  toolsAtom,
+  // toolsAtom,
 } from "../state/atoms";
 import {
   stepCountIs,
@@ -19,6 +19,8 @@ import { SystemPrompts } from "../utils/prompts";
 import type { AiMessage, MessageStream } from "../state/types";
 import { useKeyboard } from "@opentui/react";
 import { DEFAULT_AGENT_STEP_COUNT } from "../utils/constants";
+import { DevToolsTelemetry } from '@ai-sdk/devtools';
+import { getModeSpecificTools } from "../utils/tools/tools";
 
 export const useLlm = () => {
   const llm = useAtomValue(llmAtom);
@@ -27,7 +29,7 @@ export const useLlm = () => {
   const [isLoading, setLoading] = useState(false);
   const setStream = useSetAtom(streamAtom);
   let streamCache: MessageStream = []; // this is irritating the fuck out of me, but there's no choice but to do this
-  const tools = useAtomValue(toolsAtom);
+  const tools = getModeSpecificTools(chatMode)
   let abortController = new AbortController();
   const ref = useRef(abortController);
 
@@ -72,6 +74,7 @@ export const useLlm = () => {
         instructions: systemPrompt,
         tools: tools as ToolSet, // this shit is needed, but fuck it
         stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses
+        telemetry: { integrations: [DevToolsTelemetry()] },
       });
       const result = agent.stream({
         messages: messages,

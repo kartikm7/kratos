@@ -1,15 +1,13 @@
 import { tool } from "ai";
 import { z } from "zod/v4";
-import { Bash, OverlayFs } from "just-bash";
-import { createBashTool } from "bash-tool";
 import puppeteer from "puppeteer-extra";
 import stealth from "puppeteer-extra-plugin-stealth";
 import TurndownService from "turndown";
 import { replaceInFile } from "replace-in-file";
 import { readFile, writeFile, exists } from "fs/promises";
 import { CHAT_MODES, type ChatModes } from "../constants";
-import { ShellTool } from "./shellTool/shellTool";
 import { WriteToGlobalMemory } from "./knowledgeBase/knowledgeBaseTool";
+import { OnlyReadBashTools, ReadWriteBashTools } from "../..";
 // import puppeteer from "puppeteer";
 
 // TODO: should add a buffered reader, since large codebases tend to have files with > 500 lines of code making this too large
@@ -52,37 +50,6 @@ const EditFile = tool({
   },
 });
 
-const SandboxBashTools = async () => {
-  const overlayFs = new OverlayFs({
-    root: process.cwd(),
-    mountPoint: "/workspace",
-  });
-  const sandboxBash = new Bash({
-    fs: overlayFs,
-    cwd: "/workspace",
-  });
-  const { tools } = await createBashTool({
-    sandbox: sandboxBash,
-    destination: "/workspace",
-    extraInstructions: `You have access to files and directories mounted at /workspace (Sandboxed Directory, Sandboxing is only for Bash Commands).
-Do not use this to Read/Write/Edit files, use the explicit tools for those since those are not sandboxed.
-
-/workspace is the sandbox mount it's sandboxing ${process.cwd()}
-
-Use bash commands to explore:
-- ls /workspace to see the directory structure
-- cat /workspace/filename to read files
-- grep -r "pattern" /workspace to search content
-- find /workspace -name "*.ext" to find files by pattern
-- head, tail, wc, sort, uniq for data analysis
-
-Help the user explore, search, and understand the contents.`,
-  });
-
-  const { bash } = tools;
-  return bash;
-};
-
 // TODO: There's a lightweight browser, built just for this if we can migrate to that easily it will make life a whole lot better
 const turndownService = new TurndownService();
 turndownService.remove(["script", "meta", "del", "style"]);
@@ -108,26 +75,31 @@ const WebBrowserTool = tool({
 });
 
 const getModeSpecificTools = (mode: ChatModes) => {
+  const readWriteBash = ReadWriteBashTools.bash
+  const { writeFile } = ReadWriteBashTools
+  const onlyReadbash = OnlyReadBashTools.bash
+  const { readFile } = OnlyReadBashTools
   if (!CHAT_MODES.includes(mode)) return {}; // early return
   switch (mode) {
     case "build":
       return {
-        ShellTool,
+        readWriteBash,
+        readFile,
+        writeFile,
         WebBrowserTool,
-        ReadFile,
-        WriteFile,
-        EditFile,
         WriteToGlobalMemory,
       };
     case "discuss":
       return {
-        ShellTool,
+        onlyReadbash,
+        readFile,
         WebBrowserTool,
         WriteToGlobalMemory,
       };
     case "court":
       return {
-        ShellTool,
+        onlyReadbash,
+        readFile,
         WebBrowserTool,
         WriteToGlobalMemory,
       };
@@ -140,7 +112,6 @@ export {
   ReadFile,
   WriteFile,
   EditFile,
-  SandboxBashTools,
   WebBrowserTool,
   getModeSpecificTools,
 };

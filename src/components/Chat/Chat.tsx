@@ -3,7 +3,7 @@ import { ChatLayout } from "../AppLayout";
 import { Input } from "./Input";
 import { type ModelMessage, type UserModelMessage } from "ai";
 import { useState } from "react";
-import { chatModeAtom, messagesAtom, streamAtom, toolsAtom } from "../../state/atoms";
+import { chatModeAtom, messagesAtom, streamAtom } from "../../state/atoms";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useLlm } from "../../hooks/useLlm";
 import { Messages } from "./Messages/Messages";
@@ -19,7 +19,7 @@ export const Chat = () => {
   const [messages, setMessages] = useAtom(messagesAtom);
   const { isLoading, generate } = useLlm();
   const [chatMode, setChatMode] = useAtom(chatModeAtom);
-  const setTools = useSetAtom(toolsAtom);
+  // const setTools = useSetAtom(toolsAtom);
 
   useKeyboard((key) => {
     if (key.shift && key.name == "tab") {
@@ -34,7 +34,7 @@ export const Chat = () => {
       const nextMode = CHAT_MODES[nextIdx] as ChatModes; // this is so fucking stupid, but need to do this since the above code is determined
       // updating global states
       setChatMode(nextMode);
-      setTools(getModeSpecificTools(nextMode));
+      // setTools(getModeSpecificTools(nextMode));
     }
   });
 

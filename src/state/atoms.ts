@@ -5,9 +5,6 @@ import {
   type Model,
   type ModelsList,
 } from "./types";
-import {
-  getModeSpecificTools,
-} from "../utils/tools/tools";
 import type { Theme } from "../themes/types";
 import kratosTheme from "../themes/variants/kratos.json" with { type: "json" };
 import type { ChatModes } from "../utils/constants";
@@ -25,6 +22,3 @@ export const chatModeAtom = atom<ChatModes>("build"); // court mode will be fun 
 
 // maintains current chat
 export const messagesAtom = atom<ModelMessage[]>([])
-
-// the required tools
-export const toolsAtom = atom(getModeSpecificTools("build"));

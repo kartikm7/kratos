@@ -38,6 +38,15 @@ export default function App() {
     setSelectedModel(selectedModel); // load cached model
     setConnectedProvidersList(connectedProviders);
 
+    if (selectedModel) {
+      // creating model
+      const model = createModel(
+        selectedModel as Model,
+        connectedProviders || {},
+      );
+      setLlm(() => model);
+    }
+
     // this is just getting data for whatever models we currently have
 
     async function fetchAndSetModelsList() {
@@ -46,15 +55,6 @@ export default function App() {
         toast.error("Model list is empty");
         return; // returning early
       } else setModelsList(JSON.parse(JSON.parse(modelsList))); // this is so fucking weird
-
-      if (selectedModel) {
-        // creating model
-        const model = createModel(
-          selectedModel as Model,
-          connectedProviders || {},
-        );
-        setLlm(() => model);
-      }
     }
   }, []);
 

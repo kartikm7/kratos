@@ -1,8 +1,8 @@
 import { useKeyboard, useTerminalDimensions } from "@opentui/react";
 import { ChatLayout } from "../AppLayout";
 import { Input } from "./Input";
-import { type ModelMessage, type UserModelMessage } from "ai";
-import { useState } from "react";
+import { DirectChatTransport, type ModelMessage, type UserModelMessage } from "ai";
+import { useEffect, useState } from "react";
 import { chatModeAtom, messagesAtom, streamAtom } from "../../state/atoms";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useLlm } from "../../hooks/useLlm";
@@ -10,16 +10,18 @@ import { Messages } from "./Messages/Messages";
 import { AsciiTitle } from "./AsciiTitle";
 import { DynamicInfoBar } from "./DynamicInfoBar";
 import { CHAT_MODES, type ChatModes } from "../../utils/constants";
-import { getModeSpecificTools } from "../../utils/tools/tools";
+import { useChat } from "@ai-sdk/react"
 
 export const Chat = () => {
   const { height } = useTerminalDimensions();
   const [text, setText] = useState("");
-  const stream = useAtomValue(streamAtom);
-  const [messages, setMessages] = useAtom(messagesAtom);
-  const { isLoading, generate } = useLlm();
+  const { agent } = useLlm();
+  const { messages, sendMessage, status } = useChat({
+    transport: new DirectChatTransport({
+      agent: agent,
+    })
+  })
   const [chatMode, setChatMode] = useAtom(chatModeAtom);
-  // const setTools = useSetAtom(toolsAtom);
 
   useKeyboard((key) => {
     if (key.shift && key.name == "tab") {
@@ -47,14 +49,7 @@ export const Chat = () => {
     console.log(!empty && !slashCommand)
     if (!empty && !slashCommand) {
       const prompt: UserModelMessage = { role: "user", content: text };
-      const history = [...messages, prompt];
-      setMessages(history);
-      const res = await generate(history);
-      if (!res) {
-        setMessages((pre) => pre.slice(0, pre.length - 1));
-        return;
-      }
-      setMessages((pre) => [...pre, ...res]);
+      sendMessage({ text: text })
       setText("");
     }
   };
@@ -70,12 +65,6 @@ export const Chat = () => {
         {messages.length > 0 ? (
           <scrollbox stickyScroll={true} stickyStart="bottom">
             <Messages messages={messages} />
-            {stream && (
-              <Messages
-                messages={[{ role: "assistant", content: stream }]}
-                streaming
-              />
-            )}
           </scrollbox>
         ) : (
           <box justifyContent="center" alignItems="center" gap={2}>
@@ -89,9 +78,9 @@ export const Chat = () => {
           onInput={setText}
           onSubmit={handleSubmit}
           value={text}
-          loading={isLoading}
+          loading={status != "ready"}
         />
-        <DynamicInfoBar loading={isLoading} />
+        <DynamicInfoBar loading={status != "ready"} />
       </box>
     </ChatLayout>
   );

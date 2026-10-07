@@ -9,8 +9,14 @@ function Main() {
   useKeyboard((key) => {
     if (key.name == "f12") renderer.console.toggle();
   });
+
   return <App />;
 }
+
+
+// this fixes Performance.measure error - but not sure if this is right or not
+globalThis.performance.measure = (() => { }) as any // stub if still missing  
+
 
 // Function calls outside of react process
 const ReadWriteBashTools = await BashFactory(true)

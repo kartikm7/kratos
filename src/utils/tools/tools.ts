@@ -55,8 +55,8 @@ const turndownService = new TurndownService();
 turndownService.remove(["script", "meta", "del", "style"]);
 
 const WebBrowserTool = tool({
-  description:
-    "Scrape from any website, this launches playwright and returns the requested url page in markdown format",
+  title: "WebBrowser",
+  description: "Scrape from any website, this launches playwright and returns the requested url page in markdown format",
   inputSchema: z.object({ url: z.string() }),
   execute: async ({ url }) => {
     puppeteer.use(stealth());
@@ -76,8 +76,10 @@ const WebBrowserTool = tool({
 
 const getModeSpecificTools = (mode: ChatModes) => {
   const readWriteBash = ReadWriteBashTools.bash
+  readWriteBash.title = "Bash"
   const { writeFile } = ReadWriteBashTools
   const onlyReadbash = OnlyReadBashTools.bash
+  onlyReadbash.title = "ReadOnlyBash"
   const { readFile } = OnlyReadBashTools
   if (!CHAT_MODES.includes(mode)) return {}; // early return
   switch (mode) {

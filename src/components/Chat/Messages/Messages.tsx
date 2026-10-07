@@ -30,17 +30,12 @@ export const Messages = ({ messages, streaming = false }: MessagesProps) => {
 function MessageFactory({
   part,
   idx,
-  streaming = false,
 }: {
   part: UIMessagePart<UIDataTypes, UITools>;
   idx: number;
   streaming: boolean;
 }) {
   const { width } = useTerminalDimensions();
-  const theme = useAtomValue(themeAtom);
-  console.log(part)
-
-
 
   const getPartSpecifcComponent = () => {
     if (isToolUIPart(part)) {

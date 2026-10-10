@@ -79,9 +79,8 @@ export const Chat = () => {
           onInput={setText}
           onSubmit={handleSubmit}
           value={text}
-          loading={status != "ready"}
         />
-        <DynamicInfoBar loading={status != "ready"} />
+        <DynamicInfoBar loading={status == "streaming"} />
       </box>
     </ChatLayout>
   );

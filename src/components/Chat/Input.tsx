@@ -1,11 +1,10 @@
 import type { InputRenderable } from "@opentui/core";
 import {
   useKeyboard,
-  useTerminalDimensions,
   type InputProps,
 } from "@opentui/react";
 import "opentui-spinner/react";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { SlashOptions } from "../Slash/mapping";
 import { SlashConnect } from "../Slash/Connect/SlashConnect";
 import { useDialog, useDialogState } from "@opentui-ui/dialog/react";
@@ -13,6 +12,7 @@ import { SlashModel } from "../Slash/Model/SlashModel";
 import { useAtomValue, useSetAtom } from "jotai";
 import { messagesAtom, themeAtom } from "../../state/atoms";
 import { Select } from "../../ui/Select";
+import { DimensionsContext } from "../../context/context";
 
 interface CustomInputProps extends InputProps {
   loading?: boolean;
@@ -25,7 +25,7 @@ export const Input = ({
   loading = false,
   ...props
 }: CustomInputProps) => {
-  const { width } = useTerminalDimensions();
+  const { width } = useContext(DimensionsContext);
   const [options, setOptions] = useState(SlashOptions);
   const [index, setIndex] = useState(0);
   const [isSlashTriggered, setSlashTriggered] = useState(false);

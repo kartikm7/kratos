@@ -2,7 +2,7 @@ import { DialogProvider } from "@opentui-ui/dialog/react";
 import { toast, Toaster } from "@opentui-ui/toast/react";
 import { RootLayout } from "./components/AppLayout";
 import { Chat } from "./components/Chat/Chat";
-import { useEffect } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { useSetAtom } from "jotai";
 import {
   collapseAtom,
@@ -15,7 +15,8 @@ import { createModel, fetchAndCacheModels } from "./utils/models";
 import { readAuth } from "./utils/auth";
 import { readSelectedModel } from "./utils/preferences";
 import type { Model } from "./state/types";
-import { useKeyboard } from "@opentui/react";
+import { useKeyboard, useTerminalDimensions } from "@opentui/react";
+import { DimensionsContext } from "./context/context";
 
 export default function App() {
   const setModelsList = useSetAtom(modelsListAtom);
@@ -23,6 +24,7 @@ export default function App() {
   const setSelectedModel = useSetAtom(selectedModelAtom);
   const setLlm = useSetAtom(llmAtom);
   const setCollapse = useSetAtom(collapseAtom);
+  const { width, height } = useTerminalDimensions()
 
   // Global shortcut's to be defined here!
   useKeyboard((key) => {
@@ -60,12 +62,14 @@ export default function App() {
 
   return (
     <>
-      <Toaster position="top-right" />
-      <DialogProvider backdropOpacity={0}>
-        <RootLayout>
-          <Chat />
-        </RootLayout>
-      </DialogProvider>
+      <DimensionsContext value={{ width, height }}>
+        <Toaster position="top-right" />
+        <DialogProvider backdropOpacity={0}>
+          <RootLayout>
+            <Chat />
+          </RootLayout>
+        </DialogProvider>
+      </DimensionsContext>
     </>
   );
 }

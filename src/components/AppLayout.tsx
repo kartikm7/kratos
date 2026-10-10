@@ -1,4 +1,6 @@
-import { useTerminalDimensions, type BoxProps } from "@opentui/react";
+import { type BoxProps } from "@opentui/react";
+import { useContext } from "react";
+import { DimensionsContext } from "../context/context";
 
 export const RootLayout = ({ children, ...props }: BoxProps) => {
   return (
@@ -9,7 +11,7 @@ export const RootLayout = ({ children, ...props }: BoxProps) => {
 };
 
 export const ChatLayout = ({ children, ...props }: BoxProps) => {
-  const { height } = useTerminalDimensions();
+  const { height } = useContext(DimensionsContext);
   return (
     <box justifyContent="space-between" height={height} paddingY={1} {...props}>
       {children}

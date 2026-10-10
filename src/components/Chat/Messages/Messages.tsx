@@ -1,9 +1,10 @@
 import { isToolUIPart, type UIDataTypes, type UIMessage, type UIMessagePart, type UITools } from "ai";
 import { Markdown } from "../../../ui/Markdown";
-import { useTerminalDimensions } from "@opentui/react";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "../../../state/atoms";
 import { SupportBlock } from "./SupportBlock";
+import { DimensionsContext } from "../../../context/context";
+import { useContext } from "react";
 
 type MessagesProps = {
   messages: UIMessage[];
@@ -35,7 +36,7 @@ function MessageFactory({
   idx: number;
   streaming: boolean;
 }) {
-  const { width } = useTerminalDimensions();
+  const { width } = useContext(DimensionsContext);
 
   const getPartSpecifcComponent = () => {
     if (isToolUIPart(part)) {
@@ -66,7 +67,7 @@ function MessageFactory({
           <Markdown
             key={idx}
             content={part.text}
-            streaming={true}
+            streaming={false}
             width={width}
           />
         );

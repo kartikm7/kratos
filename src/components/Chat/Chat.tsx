@@ -1,8 +1,8 @@
-import { useKeyboard, useTerminalDimensions } from "@opentui/react";
+import { useKeyboard } from "@opentui/react";
 import { ChatLayout } from "../AppLayout";
 import { Input } from "./Input";
 import { DirectChatTransport, type ModelMessage, type UserModelMessage } from "ai";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { chatModeAtom, messagesAtom, streamAtom } from "../../state/atoms";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useLlm } from "../../hooks/useLlm";
@@ -11,9 +11,10 @@ import { AsciiTitle } from "./AsciiTitle";
 import { DynamicInfoBar } from "./DynamicInfoBar";
 import { CHAT_MODES, type ChatModes } from "../../utils/constants";
 import { useChat } from "@ai-sdk/react"
+import { DimensionsContext } from "../../context/context";
 
 export const Chat = () => {
-  const { height } = useTerminalDimensions();
+  const { height } = useContext(DimensionsContext);
   const [text, setText] = useState("");
   const { agent } = useLlm();
   const { messages, sendMessage, status } = useChat({

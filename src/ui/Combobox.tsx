@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { type SelectOption } from "@opentui/core";
 import {
   useKeyboard,
-  useTerminalDimensions,
   type BoxProps,
 } from "@opentui/react";
 import { Select } from "./Select";
+import { DimensionsContext } from "../context/context";
 
 export interface ComboboxProps extends BoxProps {
   placeholder?: string;
@@ -23,7 +23,7 @@ export const Combobox = ({
   setSubmitValue,
   ...props
 }: ComboboxProps) => {
-  const { height } = useTerminalDimensions();
+  const { height } = useContext(DimensionsContext);
   const [list, setList] = useState(options);
   const [text, setText] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);

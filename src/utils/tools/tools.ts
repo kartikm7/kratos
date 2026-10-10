@@ -34,10 +34,13 @@ const WebBrowserTool = tool({
 const getModeSpecificTools = (mode: ChatModes) => {
   const readWriteBash = ReadWriteBashTools.bash
   readWriteBash.title = "Bash"
-  const { writeFile } = ReadWriteBashTools
+  const { readFile, writeFile } = ReadWriteBashTools
   const onlyReadbash = OnlyReadBashTools.bash
   onlyReadbash.title = "ReadOnlyBash"
-  const { readFile } = OnlyReadBashTools
+  // commented this out, because it was not working as expected.
+  // but, it could be a security hazard since RWFS which is currently being used has access to Writing to the user Fs
+  // although readFile should only read the file, but still haha.
+  // const { readFile } = OnlyReadBashTools 
   if (!CHAT_MODES.includes(mode)) return {}; // early return
   switch (mode) {
     case "build":

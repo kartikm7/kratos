@@ -8,3 +8,4 @@ export type ChatModes = "build" | "discuss" | "court";
 
 // Some common paths
 export const MemoriesPath = path.join(AppDirectory, "Memories")
+export const SandboxMemoriesPath = "/.kratos/Memories"

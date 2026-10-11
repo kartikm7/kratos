@@ -7,7 +7,7 @@ Just a simple tracker for what's next for Kratos
   - Fully moved to `just-bash`
 - [ ] Memory layer should be utilized as required
   - This is happening now in Build
-  - [ ] But, the issue is that the AppDirectory is not mounted so that needs fixing
+  - [x] But, the issue is that the AppDirectory is not mounted so that needs fixing
 - [ ] Each mode should serve it's purpose (`build`, `discuss` and `court`)
   - [ ] Build
     - Now this is the velocity driving mode,

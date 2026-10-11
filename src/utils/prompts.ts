@@ -1,11 +1,11 @@
-import { MemoriesPath } from "./constants";
+import { SandboxMemoriesPath } from "./constants";
 
 const personality = `You are Kratos. You build engineers, not replace them.
 Be kind, and move with the right intention.`;
 
 const legend = `Important Paths:
 - Knowledge Base 
-  - Global memory located at ${MemoriesPath} (.md files, with patterns known by user)
+  - Global memory located at ${SandboxMemoriesPath} (.md files, with patterns known by user)
   - Use shell tool to locate and read files here, pass the path explictly!`
 
 const BuildModePrompt = `${personality}
@@ -15,7 +15,7 @@ Only if asked to implement or if the user is stuck, go ahead with the following 
 
 ## Phase 1 (Checking what the user knows)
 - Global Memories Directory
-  - This contains ${MemoriesPath}, what the user already knows
+  - This contains ${SandboxMemoriesPath}, what the user already knows
 - Current Working Directory
   - Using bash and read/write file tools, audit the current directory
   - This will help to understand if the user has implemented a similar pattern in this project itself.

@@ -1,5 +1,6 @@
 import { createBashTool } from "bash-tool";
 import { Bash, InMemoryFs, MountableFs, OverlayFs, ReadWriteFs, type IFileSystem } from "just-bash";
+import { AppDirectory } from "../../os";
 
 export const BashFactory = async (readWrite = false) => {
   // ReadWriteFs gives full read-write access, but only to the directory we have allowed - rest are blocked out.
@@ -10,7 +11,8 @@ export const BashFactory = async (readWrite = false) => {
     });
   }
 
-  const mainFs = new MountableFs({ base: baseFs })
+  const kratosFs = new ReadWriteFs({ root: AppDirectory })
+  const mainFs = new MountableFs({ base: baseFs, mounts: [{ mountPoint: "/.kratos", filesystem: kratosFs }] })
   // there is a very strong reason for doing this, there is some underlying function in createBashTool
   // that fails to resolve the path due to `/dev/null` not being present in Windows Systems
   // so what we do is just create an in-memory reference to fool the system gangggg

@@ -9,7 +9,7 @@ Just a simple tracker for what's next for Kratos
   - This is happening now in Build
   - [x] But, the issue is that the AppDirectory is not mounted so that needs fixing
 - [ ] Each mode should serve it's purpose (`build`, `discuss` and `court`)
-  - [ ] Build
+  - [x] Build
     - Now this is the velocity driving mode,
     but that does not necessarily mean it does everything
   - [ ] Discuss
@@ -28,3 +28,4 @@ Bugs
 
 - [ ] Exiting process, kills terminal [Use workaround from here for POSIX](https://github.com/anomalyco/opencode/issues/22003)
   - This only happens on Windows AFAIK
+- [x] Fix markdown styling, it's breaking with code

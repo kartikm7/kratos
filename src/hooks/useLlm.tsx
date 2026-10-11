@@ -42,7 +42,6 @@ export const useLlm = (): UseLLM => {
       agent: agent,
     })
   })
-  res
 
   return { ...res };
 };

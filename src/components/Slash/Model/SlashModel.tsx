@@ -32,6 +32,7 @@ const SlashModelDialog = () => {
           id: entry[1].id,
           npm: entry[1].npm,
           name: entry[0],
+          api: entry[1].api
         };
         availableModels.push(modelEntry[1]);
       });

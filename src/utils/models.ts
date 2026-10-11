@@ -4,6 +4,7 @@ import fs from "fs";
 import { AppDirectory, makeAppDir } from "./os";
 import { toast } from "@opentui-ui/toast/react";
 import type { ConnectedProvidersList, Model } from "../state/types";
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 
 const location = path.join(AppDirectory, "models.json");
 async function getModels() {
@@ -40,6 +41,10 @@ async function createModel(
   connectedProviders: ConnectedProvidersList,
 ) {
   const pkg = await import(`${selectedModel.providerInfo?.npm}`);
+  const pkgName = selectedModel.providerInfo?.npm
+  const baseURL = selectedModel.providerInfo?.api || "" // this only populates in case of openai-compatible
+  console.log(selectedModel.providerInfo)
+
   if (!pkg) {
     toast.error("Could not import model package");
     return;
@@ -50,6 +55,19 @@ async function createModel(
     return;
   }
 
+  const auth = connectedProviders[providerName];
+
+  // OpenAI Compatible
+  if (pkgName && pkgName.includes("openai-compatible")) {
+    return createOpenAICompatible({
+      name: selectedModel.name,
+      baseURL: baseURL,
+      apiKey: auth?.key,
+      includeUsage: true,
+    });
+  }
+
+  // Proprietary Model Packages Logic
   const mostlyFunctionName = `create${providerName[0]?.toUpperCase() + providerName.slice(1)}`;
   let createModel = pkg[mostlyFunctionName];
   if (!createModel) {
@@ -63,7 +81,6 @@ async function createModel(
     toast.error("Connected providers is empty");
     return;
   }
-  const auth = connectedProviders[providerName];
   const model = createModel({ apiKey: auth?.key });
   return model;
 }

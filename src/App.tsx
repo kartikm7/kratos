@@ -17,6 +17,7 @@ import { readSelectedModel } from "./utils/preferences";
 import type { Model } from "./state/types";
 import { useKeyboard, useTerminalDimensions } from "@opentui/react";
 import { DimensionsContext } from "./context/context";
+import { useRefreshModelsJson } from "./hooks/useRefreshModelsJson";
 
 export default function App() {
   const setModelsList = useSetAtom(modelsListAtom);
@@ -25,6 +26,7 @@ export default function App() {
   const setLlm = useSetAtom(llmAtom);
   const setCollapse = useSetAtom(collapseAtom);
   const { width, height } = useTerminalDimensions()
+  const { fetchAndSetModelsList } = useRefreshModelsJson()
 
   // Global shortcut's to be defined here!
   useKeyboard((key) => {
@@ -47,16 +49,6 @@ export default function App() {
         connectedProviders || {},
       );
       setLlm(() => model);
-    }
-
-    // this is just getting data for whatever models we currently have
-
-    async function fetchAndSetModelsList() {
-      const modelsList = await fetchAndCacheModels();
-      if (!modelsList) {
-        toast.error("Model list is empty");
-        return; // returning early
-      } else setModelsList(JSON.parse(JSON.parse(modelsList))); // this is so fucking weird
     }
   }, []);
 

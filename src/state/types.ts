@@ -37,6 +37,7 @@ type Model = {
     id?: string;
     npm?: string;
     name: string;
+    api?: string;
   };
 };
 type ProviderDetails = {
@@ -44,6 +45,7 @@ type ProviderDetails = {
   env?: string[];
   npm?: string;
   doc?: string;
+  api?: string;
   models: { [key: string]: Model };
 };
 

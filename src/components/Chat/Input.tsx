@@ -13,6 +13,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { messagesAtom, themeAtom } from "../../state/atoms";
 import { Select } from "../../ui/Select";
 import { DimensionsContext } from "../../context/context";
+import { useRefreshModelsJson } from "../../hooks/useRefreshModelsJson";
 
 interface CustomInputProps extends InputProps {
   loading?: boolean;
@@ -34,6 +35,7 @@ export const Input = ({
   const ref = useRef<InputRenderable>(null);
   const theme = useAtomValue(themeAtom);
   const setMessages = useSetAtom(messagesAtom)
+  const { fetchAndSetModelsList } = useRefreshModelsJson()
 
   useEffect(() => {
     if (props.value?.trim().startsWith("/")) {
@@ -102,6 +104,9 @@ export const Input = ({
         break;
       case "/model":
         SlashModel(dialog);
+        break;
+      case "/refresh-models":
+        fetchAndSetModelsList({ forceRefresh: true, successToast: true })
         break;
       case "/clear":
         setMessages([])

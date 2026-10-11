@@ -51,7 +51,7 @@ export const Markdown = ({ content, streaming, ...props }: MarkdownProps) => {
       tableOptions={{
         style: "grid",
         widthMode: "content",
-        columnFitter: "balanced",
+        columnFitter: "proportional",
         wrapMode: "word",
         borders: true,
         outerBorder: true,

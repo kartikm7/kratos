@@ -31,6 +31,7 @@ export const Messages = ({ messages, streaming = false }: MessagesProps) => {
 function MessageFactory({
   part,
   idx,
+  streaming
 }: {
   part: UIMessagePart<UIDataTypes, UITools>;
   idx: number;
@@ -67,7 +68,7 @@ function MessageFactory({
           <Markdown
             key={idx}
             content={part.text}
-            streaming={false}
+            streaming={true}
             width={width}
           />
         );

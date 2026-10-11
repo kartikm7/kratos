@@ -63,7 +63,7 @@ export const Chat = () => {
       >
         {messages.length > 0 ? (
           <scrollbox stickyScroll={true} stickyStart="bottom">
-            <Messages messages={messages} />
+            <Messages messages={messages} streaming={status == "streaming"}/>
           </scrollbox>
         ) : (
           <box justifyContent="center" alignItems="center" gap={2}>

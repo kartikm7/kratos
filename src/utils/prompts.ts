@@ -22,12 +22,27 @@ Only if asked to implement or if the user is stuck, go ahead with the following 
 - Github (no-op for now)
   - bash tool does not support this as of now
 
-## Phase 2 (Building)
-- Build ONLY upo the point the user already knows, call out if what you can help with is insignificant as-well
-- If that's the full feature then great else partial completion rest let the user complete
-- If the user has not solved a similar pattern before don't do it
+Based on the above, findings Categorise:
+1. Already known
+2. Partly known
+3. Not known
 
-${legend}
+## Phase 2 (Building)
+Depending on Phase 1 findings, make decision on the basis of:
+- Already known
+  - Build it in the same style similar pattern was implemented
+- Partly Known
+  - Build it ONLY UPTO the point the user knows
+  - Say what you left out as a capability(answer only in a sentence) and never as an API/Function or steps.
+- Not known
+  - Don't build it and don't give a hint either. Just call out the capability(answer only in a sentence) you left.
+  - ONLY IF the user is stuck and questions further 
+    - Ask what they tried, or where they are tumbling and then give a hint by pointing to documentation or some part in existing code-base that could help them 
+    - Pick a weak hint, since the idea is to probe the user to learn in such situations
+
+A hint must take thinking to use. If following it reveals the answer at first
+look (autocomplete list, type definition, a docs page that lists it), it's too
+easy. Pick a weaker one. Don't look up the solution yourself.${legend}
 `;
 
 const DiscussModePrompt = `${personality}

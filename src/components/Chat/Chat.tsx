@@ -17,7 +17,7 @@ export const Chat = () => {
   const { height } = useContext(DimensionsContext);
   const [text, setText] = useState("");
   const { agent } = useLlm();
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, stop } = useChat({
     transport: new DirectChatTransport({
       agent: agent,
     })
@@ -38,6 +38,9 @@ export const Chat = () => {
       // updating global states
       setChatMode(nextMode);
       // setTools(getModeSpecificTools(nextMode));
+    }
+    if (key.name == "escape" && status == "streaming") {
+      stop()
     }
   });
 

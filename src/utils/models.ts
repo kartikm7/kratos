@@ -43,7 +43,6 @@ async function createModel(
   const pkg = await import(`${selectedModel.providerInfo?.npm}`);
   const pkgName = selectedModel.providerInfo?.npm
   const baseURL = selectedModel.providerInfo?.api || "" // this only populates in case of openai-compatible
-  console.log(selectedModel.providerInfo)
 
   if (!pkg) {
     toast.error("Could not import model package");

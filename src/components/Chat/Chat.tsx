@@ -79,6 +79,7 @@ export const Chat = () => {
           onInput={setText}
           onSubmit={handleSubmit}
           value={text}
+          focused={status != "streaming"}
         />
         <DynamicInfoBar loading={status == "streaming"} />
       </box>

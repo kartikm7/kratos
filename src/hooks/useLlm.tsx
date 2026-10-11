@@ -7,16 +7,21 @@ import {
   // toolsAtom,
 } from "../state/atoms";
 import {
+  DirectChatTransport,
   stepCountIs,
   ToolLoopAgent,
   type ToolSet,
+  type UIMessage,
 } from "ai";
 import { SystemPrompts } from "../utils/prompts";
 import { DEFAULT_AGENT_STEP_COUNT } from "../utils/constants";
 import { DevToolsTelemetry } from '@ai-sdk/devtools';
 import { getModeSpecificTools } from "../utils/tools/tools";
+import { useChat, type UseChatHelpers } from "@ai-sdk/react";
 
-export const useLlm = () => {
+export type UseLLM = UseChatHelpers<UIMessage<any, never>>
+
+export const useLlm = (): UseLLM => {
   const [llm, setLlm] = useAtom(llmAtom);
   const chatMode = useAtomValue(chatModeAtom);
   const tools = getModeSpecificTools(chatMode)
@@ -32,6 +37,12 @@ export const useLlm = () => {
     telemetry: { integrations: [DevToolsTelemetry()] },
   });
 
+  const res = useChat({
+    transport: new DirectChatTransport({
+      agent: agent,
+    })
+  })
+  res
 
-  return { agent };
+  return { ...res };
 };

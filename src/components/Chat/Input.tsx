@@ -14,6 +14,7 @@ import { messagesAtom, themeAtom } from "../../state/atoms";
 import { Select } from "../../ui/Select";
 import { DimensionsContext } from "../../context/context";
 import { useRefreshModelsJson } from "../../hooks/useRefreshModelsJson";
+import { useChatContext } from "../../hooks/useChatContext";
 
 interface CustomInputProps extends InputProps {
   loading?: boolean;
@@ -34,7 +35,7 @@ export const Input = ({
   const dialogOpen = useDialogState((s) => s.isOpen);
   const ref = useRef<InputRenderable>(null);
   const theme = useAtomValue(themeAtom);
-  const setMessages = useSetAtom(messagesAtom)
+  const { setMessages } = useChatContext()
   const { fetchAndSetModelsList } = useRefreshModelsJson()
 
   useEffect(() => {
@@ -109,7 +110,7 @@ export const Input = ({
         fetchAndSetModelsList({ forceRefresh: true, successToast: true })
         break;
       case "/clear":
-        setMessages([])
+        setMessages(() => [])
         break;
       default:
         break;

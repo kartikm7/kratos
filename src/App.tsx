@@ -18,6 +18,7 @@ import type { Model } from "./state/types";
 import { useKeyboard, useTerminalDimensions } from "@opentui/react";
 import { DimensionsContext } from "./context/context";
 import { useRefreshModelsJson } from "./hooks/useRefreshModelsJson";
+import { ChatProvider } from "./providers/ChatProvider";
 
 export default function App() {
   const setModelsList = useSetAtom(modelsListAtom);
@@ -55,12 +56,14 @@ export default function App() {
   return (
     <>
       <DimensionsContext value={{ width, height }}>
-        <Toaster position="top-right" />
-        <DialogProvider backdropOpacity={0}>
-          <RootLayout>
-            <Chat />
-          </RootLayout>
-        </DialogProvider>
+        <ChatProvider>
+          <Toaster position="top-right" />
+          <DialogProvider backdropOpacity={0}>
+            <RootLayout>
+              <Chat />
+            </RootLayout>
+          </DialogProvider>
+        </ChatProvider>
       </DimensionsContext>
     </>
   );

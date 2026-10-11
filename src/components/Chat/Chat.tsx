@@ -1,27 +1,22 @@
 import { useKeyboard } from "@opentui/react";
 import { ChatLayout } from "../AppLayout";
 import { Input } from "./Input";
-import { DirectChatTransport, type ModelMessage, type UserModelMessage } from "ai";
-import { useContext, useEffect, useState } from "react";
-import { chatModeAtom, messagesAtom, streamAtom } from "../../state/atoms";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { type UserModelMessage } from "ai";
+import { useContext, useState } from "react";
+import { chatModeAtom } from "../../state/atoms";
+import { useAtom } from "jotai";
 import { useLlm } from "../../hooks/useLlm";
 import { Messages } from "./Messages/Messages";
 import { AsciiTitle } from "./AsciiTitle";
 import { DynamicInfoBar } from "./DynamicInfoBar";
 import { CHAT_MODES, type ChatModes } from "../../utils/constants";
-import { useChat } from "@ai-sdk/react"
-import { DimensionsContext } from "../../context/context";
+import { ChatContext, DimensionsContext } from "../../context/context";
+import { useChatContext } from "../../hooks/useChatContext";
 
 export const Chat = () => {
   const { height } = useContext(DimensionsContext);
   const [text, setText] = useState("");
-  const { agent } = useLlm();
-  const { messages, sendMessage, status, stop } = useChat({
-    transport: new DirectChatTransport({
-      agent: agent,
-    })
-  })
+  const { messages, sendMessage, status, stop } = useChatContext();
   const [chatMode, setChatMode] = useAtom(chatModeAtom);
 
   useKeyboard((key) => {

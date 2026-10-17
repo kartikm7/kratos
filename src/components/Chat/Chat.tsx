@@ -5,12 +5,11 @@ import { type UserModelMessage } from "ai";
 import { useContext, useState } from "react";
 import { chatModeAtom } from "../../state/atoms";
 import { useAtom } from "jotai";
-import { useLlm } from "../../hooks/useLlm";
 import { Messages } from "./Messages/Messages";
 import { AsciiTitle } from "./AsciiTitle";
 import { DynamicInfoBar } from "./DynamicInfoBar";
 import { CHAT_MODES, type ChatModes } from "../../utils/constants";
-import { ChatContext, DimensionsContext } from "../../context/context";
+import { DimensionsContext } from "../../context/context";
 import { useChatContext } from "../../hooks/useChatContext";
 
 export const Chat = () => {
@@ -34,7 +33,6 @@ export const Chat = () => {
       const nextMode = CHAT_MODES[nextIdx] as ChatModes; // this is so fucking stupid, but need to do this since the above code is determined
       // updating global states
       setChatMode(nextMode);
-      // setTools(getModeSpecificTools(nextMode));
     }
     if (key.name == "escape" && completionPending) {
       stop()
@@ -65,7 +63,7 @@ export const Chat = () => {
       >
         {messages.length > 0 ? (
           <scrollbox stickyScroll={true} stickyStart="bottom">
-            <Messages messages={messages} streaming={completionPending}/>
+            <Messages messages={messages} streaming={status == "streaming"}/>
           </scrollbox>
         ) : (
           <box justifyContent="center" alignItems="center" gap={2}>

@@ -4,6 +4,7 @@ import {
   type MessageStream,
   type Model,
   type ModelsList,
+  type Toast
 } from "./types";
 import type { Theme } from "../themes/types";
 import kratosTheme from "../themes/variants/kratos.json" with { type: "json" };
@@ -33,3 +34,7 @@ export const chatModeAtom = atom<ChatModes>("build"); // court mode will be fun 
 
 // maintains current chat
 export const messagesAtom = atom<ModelMessage[]>([])
+
+
+// 
+export const toastAtom = atom<Toast>(null)

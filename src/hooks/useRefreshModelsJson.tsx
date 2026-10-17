@@ -1,10 +1,11 @@
-import { toast } from "@opentui-ui/toast/react";
 import { fetchAndCacheModels } from "../utils/models";
 import { useSetAtom } from "jotai";
 import { modelsListAtom } from "../state/atoms";
+import { useToast } from "./useToast";
 
 export const useRefreshModelsJson = () => {
   const setModelsList = useSetAtom(modelsListAtom);
+  const {toast} = useToast()
 
   // this is just getting data for whatever models we currently have
   async function fetchAndSetModelsList(opts = { forceRefresh: false, successToast: false }) {

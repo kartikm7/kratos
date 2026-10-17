@@ -1,5 +1,4 @@
 import { DialogProvider } from "@opentui-ui/dialog/react";
-import { toast, Toaster } from "@opentui-ui/toast/react";
 import { RootLayout } from "./components/AppLayout";
 import { Chat } from "./components/Chat/Chat";
 import { createContext, useContext, useEffect } from "react";
@@ -19,6 +18,7 @@ import { useKeyboard, useTerminalDimensions } from "@opentui/react";
 import { DimensionsContext } from "./context/context";
 import { useRefreshModelsJson } from "./hooks/useRefreshModelsJson";
 import { ChatProvider } from "./providers/ChatProvider";
+import { Toaster } from "./ui/Toaster";
 
 export default function App() {
   const setModelsList = useSetAtom(modelsListAtom);
@@ -57,7 +57,7 @@ export default function App() {
     <>
       <DimensionsContext value={{ width, height }}>
         <ChatProvider>
-          <Toaster position="top-right" />
+          <Toaster />
           <DialogProvider backdropOpacity={0}>
             <RootLayout>
               <Chat />

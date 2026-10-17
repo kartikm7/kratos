@@ -68,11 +68,16 @@ type AiMessage =
   | ToolResultPart;
 type MessageStream = Array<AiMessage>;
 
+type Toast = {
+  message: string;
+  type: "success" | "error" | "info"
+} | null
+
 export {
-  type Model,
-  type ProviderDetails,
+  type Model, type ProviderDetails,
   type ModelsList,
   type ConnectedProvidersList,
   type AiMessage,
   type MessageStream,
+  type Toast
 };

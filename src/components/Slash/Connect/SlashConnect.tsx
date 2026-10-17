@@ -6,7 +6,7 @@ import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
 import { modelsListAtom } from "../../../state/atoms";
 import { useAtomValue } from "jotai";
 import type { SelectOption } from "@opentui/core";
-import { toast } from "@opentui-ui/toast/react";
+import { useToast } from "../../../hooks/useToast";
 
 const SlashConnectDialog = () => {
   const [text, setText] = useState("");
@@ -15,6 +15,7 @@ const SlashConnectDialog = () => {
     SelectOption | undefined
   >();
   const dialog = useDialog();
+  const {toast} = useToast()
   const flatenned = Object.entries(list ?? {}).map((entry) => {
     return { name: entry[0], value: entry[0], description: "" };
   });

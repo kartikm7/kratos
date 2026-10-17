@@ -18,6 +18,8 @@ export const Chat = () => {
   const [text, setText] = useState("");
   const { messages, sendMessage, status, stop } = useChatContext();
   const [chatMode, setChatMode] = useAtom(chatModeAtom);
+  const completionPending = status == "streaming" || status == "submitted"
+  const streamingDone = status == "ready"
 
   useKeyboard((key) => {
     if (key.shift && key.name == "tab") {
@@ -34,7 +36,7 @@ export const Chat = () => {
       setChatMode(nextMode);
       // setTools(getModeSpecificTools(nextMode));
     }
-    if (key.name == "escape" && status == "streaming") {
+    if (key.name == "escape" && completionPending) {
       stop()
     }
   });
@@ -63,7 +65,7 @@ export const Chat = () => {
       >
         {messages.length > 0 ? (
           <scrollbox stickyScroll={true} stickyStart="bottom">
-            <Messages messages={messages} streaming={status == "streaming"}/>
+            <Messages messages={messages} streaming={completionPending}/>
           </scrollbox>
         ) : (
           <box justifyContent="center" alignItems="center" gap={2}>
@@ -77,9 +79,8 @@ export const Chat = () => {
           onInput={setText}
           onSubmit={handleSubmit}
           value={text}
-          focused={status != "streaming"}
-        />
-        <DynamicInfoBar loading={status == "streaming"} />
+          focused={streamingDone} />
+        <DynamicInfoBar loading={completionPending} />
       </box>
     </ChatLayout>
   );

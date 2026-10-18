@@ -6,8 +6,8 @@ export const chatsTable = sqliteTable("chats_table", {
   id: int().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
   path: text().notNull(), // this is needed
-  created_at: text().default(sql`(CURRENT_TIMESTAMP)`),
-  updated_at: text().default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: text().default(sql`(CURRENT_TIMESTAMP)`),
+  updatedAt: text().default(sql`(CURRENT_TIMESTAMP)`),
 });
 
 export const messagesTable = sqliteTable("messages_table", {
@@ -17,6 +17,6 @@ export const messagesTable = sqliteTable("messages_table", {
     .$type<UIMessagePart<UIDataTypes, UITools>[]>()
     .notNull(),
   chatId: int("chat_id").references(() => chatsTable.id),
-  created_at: text().default(sql`(CURRENT_TIMESTAMP)`),
-  updated_at: text().default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: text().default(sql`(CURRENT_TIMESTAMP)`),
+  updatedAt: text().default(sql`(CURRENT_TIMESTAMP)`),
 });

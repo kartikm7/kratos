@@ -1,9 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { type SelectOption } from "@opentui/core";
-import {
-  useKeyboard,
-  type BoxProps,
-} from "@opentui/react";
+import { useKeyboard, type BoxProps } from "@opentui/react";
 import { Select } from "./Select";
 import { DimensionsContext } from "../context/context";
 
@@ -56,8 +53,10 @@ export const Combobox = ({
       }),
     );
 
-    return () => { setList([]) }
-  }, [text]);
+    return () => {
+      setList([]);
+    };
+  }, [text, options]);
 
   return (
     <box gap={1} height={height * 0.25} {...props}>

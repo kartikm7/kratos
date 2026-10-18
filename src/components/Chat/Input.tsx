@@ -16,6 +16,7 @@ import { Select } from "../../ui/Select";
 import { DimensionsContext } from "../../context/context";
 import { useRefreshModelsJson } from "../../hooks/useRefreshModelsJson";
 import { useChatContext } from "../../hooks/useChatContext";
+import { SlashResume } from "../Slash/Resume/SlashResume";
 
 interface CustomInputProps extends TextareaProps {
   loading?: boolean;
@@ -108,6 +109,9 @@ export const Input = ({
         break;
       case "/model":
         SlashModel(dialog);
+        break;
+      case "/resume-chat":
+        SlashResume(dialog);
         break;
       case "/refresh-models":
         fetchAndSetModelsList({ forceRefresh: true, successToast: true });

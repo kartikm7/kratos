@@ -35,9 +35,9 @@ export const useDb = () => {
     }
   };
 
-  const getChatIds = async () => {
+  const getAllChats = () => {
     try {
-      const res = await db.select().from(chatsTable);
+      const res = db.select().from(chatsTable).all();
       return res;
     } catch (e: any) {
       console.error("[DB] Failure:", e.cause?.message ?? e.cause);
@@ -46,13 +46,14 @@ export const useDb = () => {
     return [];
   };
 
-  const getChat = async (chatId: number) => {
+  const getChat = (chatId: number) => {
     try {
       if (!chatId) throw new Error("Empty chat ID is not accepted");
-      const res = await db
+      const res = db
         .select()
         .from(messagesTable)
-        .where(eq(messagesTable.chatId, chatId));
+        .where(eq(messagesTable.chatId, chatId))
+        .all();
       return res;
     } catch (e: any) {
       console.error("[DB] Failure:", e.cause?.message ?? e.cause ?? e);
@@ -60,5 +61,17 @@ export const useDb = () => {
     return [];
   };
 
-  return { appendToChat, getChatIds, getChat };
+  const filterChat = (chat: (typeof messagesTable.$inferInsert)[]) => {
+    const filteredChat = chat.map((val) => {
+      const message: UIMessage<null, never> = {
+        id: String(val.id),
+        parts: val.parts as any,
+        role: val.role,
+      };
+      return message;
+    });
+    return filteredChat;
+  };
+
+  return { appendToChat, getAllChats, getChat, filterChat };
 };

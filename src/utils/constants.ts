@@ -11,5 +11,4 @@ export const MemoriesPath = path.join(AppDirectory, "Memories");
 export const SandboxMemoriesPath = "/.kratos/Memories";
 
 // this includes file: prefix
-export const DatabaseFilePath =
-  "file:" + path.join(AppDirectory, "sessions.db"); // learned something new with the "file:" prefix
+export const DatabaseFilePath = path.join(AppDirectory, "chats.db");

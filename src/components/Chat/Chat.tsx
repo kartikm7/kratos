@@ -48,7 +48,6 @@ export const Chat = () => {
     // TODO: the moment we introduce prompts that can be accessed via this, we are fucked
     // all I'm saying is this is not intuitive nor is it scalable, not intuitive because the same check is maintained in two functions
     // but who cares, if it works it works
-    console.log(!empty && !slashCommand);
     if (!empty && !slashCommand) {
       const userMessage: UIMessage<any, never> = {
         id: generateId(),

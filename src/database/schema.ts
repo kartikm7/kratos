@@ -8,7 +8,7 @@ export const chatsTable = sqliteTable("chats_table", {
 
 export const messagesTable = sqliteTable("messages_table", {
   id: int().primaryKey({ autoIncrement: true }),
-  role: text().notNull(),
+  role: text().$type<"system" | "user" | "assistant">().notNull(),
   parts: text("parts", { mode: "json" })
     .$type<UIMessagePart<UIDataTypes, UITools>[]>()
     .notNull(),

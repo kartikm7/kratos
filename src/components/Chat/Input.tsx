@@ -10,8 +10,8 @@ import { SlashOptions } from "../Slash/mapping";
 import { SlashConnect } from "../Slash/Connect/SlashConnect";
 import { useDialog, useDialogState } from "@opentui-ui/dialog/react";
 import { SlashModel } from "../Slash/Model/SlashModel";
-import { useAtomValue } from "jotai";
-import { themeAtom } from "../../state/atoms";
+import { useAtomValue, useSetAtom } from "jotai";
+import { chatIdAtom, themeAtom } from "../../state/atoms";
 import { Select } from "../../ui/Select";
 import { DimensionsContext } from "../../context/context";
 import { useRefreshModelsJson } from "../../hooks/useRefreshModelsJson";
@@ -39,6 +39,7 @@ export const Input = ({
   const dialogOpen = useDialogState((s) => s.isOpen);
   const ref = useRef<TextareaRenderable>(null);
   const theme = useAtomValue(themeAtom);
+  const setChatId = useSetAtom(chatIdAtom);
   const { setMessages } = useChatContext();
   const { fetchAndSetModelsList } = useRefreshModelsJson();
 
@@ -117,6 +118,8 @@ export const Input = ({
         fetchAndSetModelsList({ forceRefresh: true, successToast: true });
         break;
       case "/clear":
+        // I hate this, the handling is so all over the place. But for now we good.
+        setChatId(undefined);
         setMessages(() => []);
         break;
       default:

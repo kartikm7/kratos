@@ -26,8 +26,8 @@ export default function App() {
   const setSelectedModel = useSetAtom(selectedModelAtom);
   const setLlm = useSetAtom(llmAtom);
   const setCollapse = useSetAtom(collapseAtom);
-  const { width, height } = useTerminalDimensions()
-  const { fetchAndSetModelsList } = useRefreshModelsJson()
+  const { width, height } = useTerminalDimensions();
+  const { fetchAndSetModelsList } = useRefreshModelsJson();
 
   // Global shortcut's to be defined here!
   useKeyboard((key) => {

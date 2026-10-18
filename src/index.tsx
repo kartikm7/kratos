@@ -5,7 +5,7 @@ import { BashFactory } from "./utils/tools/bashTool/bashFactory";
 
 function Main() {
   // this is really helpful for figuring out what is propogating the memory leak
-  process.on('warning', e => console.warn(e.stack));
+  process.on("warning", (e) => console.warn(e.stack));
   useKeyboard((key) => {
     if (key.name == "f12") renderer.console.toggle();
   });
@@ -13,17 +13,15 @@ function Main() {
   return <App />;
 }
 
-
 // this fixes Performance.measure error - but not sure if this is right or not
-globalThis.performance.measure = (() => { }) as any // stub if still missing  
-
+globalThis.performance.measure = (() => {}) as any; // stub if still missing
 
 // Function calls outside of react process
-const ReadWriteBashTools = await BashFactory(true)
-const OnlyReadBashTools = await BashFactory(false)
+const ReadWriteBashTools = await BashFactory(true);
+const OnlyReadBashTools = await BashFactory(false);
 
 const renderer = await createCliRenderer();
 createRoot(renderer).render(<Main />);
 
 // Exporting the functions called outside of react process
-export { ReadWriteBashTools, OnlyReadBashTools }
+export { ReadWriteBashTools, OnlyReadBashTools };

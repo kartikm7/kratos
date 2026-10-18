@@ -17,8 +17,8 @@ export const Chat = () => {
   const [text, setText] = useState("");
   const { messages, sendMessage, status, stop } = useChatContext();
   const [chatMode, setChatMode] = useAtom(chatModeAtom);
-  const completionPending = status == "streaming" || status == "submitted"
-  const streamingDone = status == "ready"
+  const completionPending = status == "streaming" || status == "submitted";
+  const streamingDone = status == "ready";
 
   useKeyboard((key) => {
     if (key.shift && key.name == "tab") {
@@ -35,21 +35,19 @@ export const Chat = () => {
       setChatMode(nextMode);
     }
     if (key.name == "escape" && completionPending) {
-      stop()
+      stop();
     }
   });
 
   const handleSubmit = async () => {
-    const empty = text.trim().length == 0
-    const slashCommand = text.trim().charAt(0) == "/"
+    const empty = text.trim().length == 0;
+    const slashCommand = text.trim().charAt(0) == "/";
     // TODO: the moment we introduce prompts that can be accessed via this, we are fucked
     // all I'm saying is this is not intuitive nor is it scalable, not intuitive because the same check is maintained in two functions
     // but who cares, if it works it works
-    console.log(!empty && !slashCommand)
+    console.log(!empty && !slashCommand);
     if (!empty && !slashCommand) {
-      const prompt: UserModelMessage = { role: "user", content: text };
-      sendMessage({ text: text })
-      setText("");
+      sendMessage({ text: text });
     }
   };
 
@@ -63,7 +61,7 @@ export const Chat = () => {
       >
         {messages.length > 0 ? (
           <scrollbox stickyScroll={true} stickyStart="bottom">
-            <Messages messages={messages} streaming={status == "streaming"}/>
+            <Messages messages={messages} streaming={status == "streaming"} />
           </scrollbox>
         ) : (
           <box justifyContent="center" alignItems="center" gap={2}>
@@ -72,12 +70,12 @@ export const Chat = () => {
           </box>
         )}
       </box>
-      <box alignItems="flex-start">
+      <box flexDirection="row" flexWrap="wrap">
         <Input
-          onInput={setText}
+          onTextChange={(t) => setText(t)}
           onSubmit={handleSubmit}
-          value={text}
-          focused={streamingDone} />
+          focused={streamingDone}
+        />
         <DynamicInfoBar loading={completionPending} />
       </box>
     </ChatLayout>

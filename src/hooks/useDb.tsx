@@ -4,6 +4,7 @@ import { chatIdAtom } from "../state/atoms";
 import { db } from "../database/database";
 import { chatsTable, messagesTable } from "../database/schema";
 import { eq } from "drizzle-orm";
+import { CurrentWorkingDirectory } from "../utils/constants";
 
 export const useDb = () => {
   const [chatId, setChatId] = useAtom(chatIdAtom);
@@ -13,7 +14,7 @@ export const useDb = () => {
     if (!chatId) {
       const result = await db
         .insert(chatsTable)
-        .values({ title: crypto.randomUUID() }); // TODO: Generate a Title based on the chat
+        .values({ title: crypto.randomUUID(), path: CurrentWorkingDirectory }); // TODO: Generate a Title based on the chat
       lastInsertRowid = Number(result.lastInsertRowid);
       setChatId(Number(lastInsertRowid));
     }
@@ -38,6 +39,21 @@ export const useDb = () => {
   const getAllChats = () => {
     try {
       const res = db.select().from(chatsTable).all();
+      return res;
+    } catch (e: any) {
+      console.error("[DB] Failure:", e.cause?.message ?? e.cause);
+    }
+
+    return [];
+  };
+
+  const getAllChatsInCwd = () => {
+    try {
+      const res = db
+        .select()
+        .from(chatsTable)
+        .where(eq(chatsTable.path, CurrentWorkingDirectory))
+        .all();
       return res;
     } catch (e: any) {
       console.error("[DB] Failure:", e.cause?.message ?? e.cause);
@@ -73,5 +89,5 @@ export const useDb = () => {
     return filteredChat;
   };
 
-  return { appendToChat, getAllChats, getChat, filterChat };
+  return { appendToChat, getAllChats, getAllChatsInCwd, getChat, filterChat };
 };

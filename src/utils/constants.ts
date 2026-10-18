@@ -12,3 +12,4 @@ export const SandboxMemoriesPath = "/.kratos/Memories";
 
 // this includes file: prefix
 export const DatabaseFilePath = path.join(AppDirectory, "chats.db");
+export const CurrentWorkingDirectory = process.cwd();

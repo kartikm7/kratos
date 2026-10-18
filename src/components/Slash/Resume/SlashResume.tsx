@@ -4,20 +4,20 @@ import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
 import type { SelectOption } from "@opentui/core";
 import { useToast } from "../../../hooks/useToast";
 import { useDb } from "../../../hooks/useDb";
-import { useSetAtom } from "jotai";
-import { chatIdAtom } from "../../../state/atoms";
+import { useAtomValue, useSetAtom } from "jotai";
+import { chatIdAtom, themeAtom } from "../../../state/atoms";
 import { useChatContext } from "../../../hooks/useChatContext";
-import type { UIMessage } from "ai";
 
 // list based on connectedProviders
 const SlashResumeDialog = () => {
   const { toast } = useToast();
   const dialog = useDialog();
-  const { getAllChats, getChat, filterChat } = useDb();
+  const { getAllChatsInCwd, getChat, filterChat } = useDb();
   const { setMessages } = useChatContext();
   const setChatId = useSetAtom(chatIdAtom);
+  const theme = useAtomValue(themeAtom);
 
-  const allChats = getAllChats();
+  const allChats = getAllChatsInCwd();
   if (!allChats) return;
 
   const options = allChats.map((val) => {
@@ -48,13 +48,19 @@ const SlashResumeDialog = () => {
 
   return (
     <DialogRoot>
-      <DialogHeader>Choose a model</DialogHeader>
-      <Combobox
-        onSubmit={handleSubmit}
-        showDescription
-        placeholder="Chat"
-        options={options}
-      />
+      <DialogHeader>Resume a chat</DialogHeader>
+      {options.length > 0 ? (
+        <Combobox
+          onSubmit={handleSubmit}
+          showDescription
+          placeholder="Chat title"
+          options={options}
+        />
+      ) : (
+        <text fg={theme.dark.palette.accent}>
+          No previous chats found in the current working directory
+        </text>
+      )}
     </DialogRoot>
   );
 };

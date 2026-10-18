@@ -42,18 +42,15 @@ export const DynamicInfoBar = ({
       {...props}
     >
       <box alignItems="center" flexDirection="row">
+        <text bg={modeColor} content={" " + capitalise(chatMode) + " "} />
         {loading && (
           <>
-            <spinner
-              name="growHorizontal"
-              color={theme?.dark.palette.primary}
-            />
+            <spinner name="growHorizontal" color={modeColor} />
             <text marginLeft={1} fg="grey">
               Streaming... (esc to cancel) |
             </text>
           </>
         )}
-        <text bg={modeColor} content={" " + capitalise(chatMode) + " "} />
       </box>
       <box>
         <AccentText opacity={selectedModel ? 1 : 0.5}>

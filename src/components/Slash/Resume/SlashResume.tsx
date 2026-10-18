@@ -22,7 +22,7 @@ const SlashResumeDialog = () => {
 
   const options = allChats.map((val) => {
     return {
-      name: val.title,
+      name: `${val.title} (${new Date(val.updatedAt || "").toLocaleDateString()})`,
       value: val,
       description: "",
     };

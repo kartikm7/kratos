@@ -3,7 +3,7 @@ import { useAtom } from "jotai";
 import { chatIdAtom } from "../state/atoms";
 import { db } from "../database/database";
 import { chatsTable, messagesTable } from "../database/schema";
-import { eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { CurrentWorkingDirectory } from "../utils/constants";
 
 export const useDb = () => {
@@ -30,6 +30,11 @@ export const useDb = () => {
         chatId: Number(lastInsertRowid),
       };
       const res = await db.insert(messagesTable).values(row);
+      // updating timestamp
+      await db
+        .update(chatsTable)
+        .set({ updatedAt: sql`(CURRENT_TIMESTAMP)` })
+        .where(eq(chatsTable.id, lastInsertRowid));
       console.log("[DB] Message saved successfully", res.lastInsertRowid);
     } catch (e: any) {
       console.error("[DB] Failure:", e.cause?.message ?? e.cause);
@@ -38,7 +43,11 @@ export const useDb = () => {
 
   const getAllChats = () => {
     try {
-      const res = db.select().from(chatsTable).all();
+      const res = db
+        .select()
+        .from(chatsTable)
+        .orderBy(desc(chatsTable.updatedAt))
+        .all();
       return res;
     } catch (e: any) {
       console.error("[DB] Failure:", e.cause?.message ?? e.cause);

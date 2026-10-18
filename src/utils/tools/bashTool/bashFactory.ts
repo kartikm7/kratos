@@ -4,7 +4,7 @@ import { AppDirectory } from "../../os";
 
 export const BashFactory = async (readWrite = false) => {
   // ReadWriteFs gives full read-write access, but only to the directory we have allowed - rest are blocked out.
-  let baseFs = new OverlayFs({ root: process.cwd() }) as IFileSystem
+  let baseFs = new OverlayFs({ root: process.cwd(), mountPoint: "/" }) as IFileSystem
   if (readWrite) {
     baseFs = new ReadWriteFs({
       root: process.cwd(),

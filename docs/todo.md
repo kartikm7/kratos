@@ -12,7 +12,8 @@ Just a simple tracker for what's next for Kratos
   - [x] Build
     - Now this is the velocity driving mode,
     but that does not necessarily mean it does everything
-  - [ ] Discuss
+  - [x] Discuss
+    - This is in good shape now, so let's leave it at this for now
   - [ ] Court
 - [ ] Add Evals
   - This will help test out LLM outputs, rather critical for that

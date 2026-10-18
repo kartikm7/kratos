@@ -1,0 +1,1 @@
+ALTER TABLE `chats_table` ADD `path` text NOT NULL;

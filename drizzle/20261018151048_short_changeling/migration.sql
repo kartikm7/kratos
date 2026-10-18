@@ -1,0 +1,1 @@
+ALTER TABLE `messages_table` RENAME COLUMN `content` TO `parts`;

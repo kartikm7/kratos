@@ -1,11 +1,6 @@
 import type { BoxProps } from "@opentui/react";
 import { useAtomValue } from "jotai";
-import {
-  chatModeAtom,
-  selectedModelAtom,
-  streamAtom,
-  themeAtom,
-} from "../../state/atoms";
+import { chatModeAtom, selectedModelAtom, themeAtom } from "../../state/atoms";
 import { AccentText } from "../../ui/AccentText";
 import { capitalise } from "../../utils/string";
 
@@ -17,7 +12,6 @@ export const DynamicInfoBar = ({
   loading = false,
   ...props
 }: DynamicInfoBarProps) => {
-  const stream = useAtomValue(streamAtom);
   const selectedModel = useAtomValue(selectedModelAtom);
   const theme = useAtomValue(themeAtom);
   const chatMode = useAtomValue(chatModeAtom);
@@ -47,7 +41,7 @@ export const DynamicInfoBar = ({
           <>
             <spinner name="growHorizontal" color={modeColor} />
             <text marginLeft={1} fg="grey">
-              Streaming... (esc to cancel) |
+              Streaming... (esc to cancel)
             </text>
           </>
         )}

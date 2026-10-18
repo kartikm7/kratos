@@ -1,11 +1,5 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import {
-  chatModeAtom,
-  llmAtom,
-  selectedModelAtom,
-  streamAtom,
-  // toolsAtom,
-} from "../state/atoms";
+import { chatModeAtom, llmAtom, selectedModelAtom } from "../state/atoms";
 import {
   DirectChatTransport,
   stepCountIs,
@@ -15,17 +9,19 @@ import {
 } from "ai";
 import { SystemPrompts } from "../utils/prompts";
 import { DEFAULT_AGENT_STEP_COUNT } from "../utils/constants";
-import { DevToolsTelemetry } from '@ai-sdk/devtools';
+import { DevToolsTelemetry } from "@ai-sdk/devtools";
 import { getModeSpecificTools } from "../utils/tools/tools";
 import { useChat, type UseChatHelpers } from "@ai-sdk/react";
+import { useDb } from "./useDb";
 
-export type UseLLM = UseChatHelpers<UIMessage<any, never>>
+export type UseLLM = UseChatHelpers<UIMessage<any, never>>;
 
 export const useLlm = (): UseLLM => {
   const [llm, setLlm] = useAtom(llmAtom);
   const chatMode = useAtomValue(chatModeAtom);
-  const tools = getModeSpecificTools(chatMode)
-  const selectedModel = useAtomValue(selectedModelAtom)
+  const { appendToChat } = useDb();
+  const tools = getModeSpecificTools(chatMode);
+  const selectedModel = useAtomValue(selectedModelAtom);
 
   if (!llm) throw new Error("Missing LLM");
   const systemPrompt = SystemPrompts[chatMode];
@@ -40,8 +36,11 @@ export const useLlm = (): UseLLM => {
   const res = useChat({
     transport: new DirectChatTransport({
       agent: agent,
-    })
-  })
+    }),
+    onFinish: ({ message, messages }) => {
+      appendToChat(message);
+    },
+  });
 
   return { ...res };
 };

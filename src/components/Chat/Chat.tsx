@@ -1,7 +1,7 @@
 import { useKeyboard } from "@opentui/react";
 import { ChatLayout } from "../AppLayout";
 import { Input } from "./Input";
-import { type UserModelMessage } from "ai";
+import { generateId, type UserModelMessage } from "ai";
 import { useContext, useState } from "react";
 import { chatModeAtom } from "../../state/atoms";
 import { useAtom } from "jotai";
@@ -11,12 +11,15 @@ import { DynamicInfoBar } from "./DynamicInfoBar";
 import { CHAT_MODES, type ChatModes } from "../../utils/constants";
 import { DimensionsContext } from "../../context/context";
 import { useChatContext } from "../../hooks/useChatContext";
+import { useDb } from "../../hooks/useDb";
+import type { UIMessage } from "@ai-sdk/react";
 
 export const Chat = () => {
   const { height } = useContext(DimensionsContext);
   const [text, setText] = useState("");
   const { messages, sendMessage, status, stop } = useChatContext();
   const [chatMode, setChatMode] = useAtom(chatModeAtom);
+  const { appendToChat } = useDb();
   const completionPending = status == "streaming" || status == "submitted";
   const streamingDone = status == "ready";
 
@@ -47,7 +50,13 @@ export const Chat = () => {
     // but who cares, if it works it works
     console.log(!empty && !slashCommand);
     if (!empty && !slashCommand) {
-      sendMessage({ text: text });
+      const userMessage: UIMessage<any, never> = {
+        id: generateId(),
+        role: "user",
+        parts: [{ type: "text", text: text }],
+      };
+      appendToChat(userMessage);
+      sendMessage(userMessage);
     }
   };
 

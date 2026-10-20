@@ -1,9 +1,5 @@
-import type { InputRenderable, TextareaRenderable } from "@opentui/core";
-import {
-  useKeyboard,
-  type InputProps,
-  type TextareaProps,
-} from "@opentui/react";
+import type { TextareaRenderable } from "@opentui/core";
+import { useKeyboard, type TextareaProps } from "@opentui/react";
 import "opentui-spinner/react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { SlashOptions } from "../Slash/mapping";

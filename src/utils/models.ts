@@ -4,7 +4,8 @@ import fs from "fs";
 import { AppDirectory, makeAppDir } from "./os";
 import { toast } from "@opentui-ui/toast/react";
 import type { ConnectedProvidersList, Model } from "../state/types";
-import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import { Providers } from "./constants";
 
 const location = path.join(AppDirectory, "models.json");
 async function getModels() {
@@ -40,9 +41,10 @@ async function createModel(
   selectedModel: Model,
   connectedProviders: ConnectedProvidersList,
 ) {
-  const pkg = await import(`${selectedModel.providerInfo?.npm}`);
-  const pkgName = selectedModel.providerInfo?.npm
-  const baseURL = selectedModel.providerInfo?.api || "" // this only populates in case of openai-compatible
+  if (!selectedModel.providerInfo?.npm) return;
+  const pkg = await (Providers as any)[selectedModel.providerInfo.npm](); // this is janky but works
+  const pkgName = selectedModel.providerInfo?.npm;
+  const baseURL = selectedModel.providerInfo?.api || ""; // this only populates in case of openai-compatible
 
   if (!pkg) {
     toast.error("Could not import model package");

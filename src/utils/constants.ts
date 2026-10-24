@@ -13,3 +13,12 @@ export const SandboxMemoriesPath = "/.kratos/Memories";
 // this includes file: prefix
 export const DatabaseFilePath = path.join(AppDirectory, "chats.db");
 export const CurrentWorkingDirectory = process.cwd();
+
+// Supported providers
+// TODO: This is low-key tech-debt if we can find a better for the bun-compiler to bundle the packages, then it'll be sorted
+export const Providers = {
+  "@ai-sdk/google": () => import("@ai-sdk/google"),
+  "@ai-sdk/groq": () => import("@ai-sdk/groq"),
+  "@ai-sdk/mistral": () => import("@ai-sdk/mistral"),
+  "@ai-sdk/openai-compatible": () => import("@ai-sdk/openai-compatible"),
+};

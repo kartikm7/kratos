@@ -1,5 +1,5 @@
 import axios from "axios";
-import path from "path";
+import path, { format } from "path";
 import fs from "fs";
 import { AppDirectory, makeAppDir } from "./os";
 import type {
@@ -9,9 +9,10 @@ import type {
   Model,
 } from "../state/types";
 import { toast } from "@opentui-ui/toast/react";
-import { LOCAL_MODEL, LOCAL_PROVIDER } from "./constants";
+import { GET_LOCAL_MODEL_ENDPOINT, LOCAL_PROVIDER } from "./constants";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { Providers } from "./constants";
+import urlJoin from "url-join";
 
 const location = path.join(AppDirectory, "models.json");
 
@@ -43,6 +44,35 @@ async function fetchAndCacheModels(forceRefresh = false) {
   return models;
 }
 
+async function getLocalModels(connectedProviders: ConnectedProvidersList = {}) {
+  const auth = connectedProviders[LOCAL_PROVIDER] as LocalConnectedProvider; // only one endpoint at this point (users using multiple got to be lesser)
+  if (!auth) throw new Error("No Local Provider Found");
+  const url = urlJoin(auth.baseUrl, GET_LOCAL_MODEL_ENDPOINT);
+  const response = await axios.get(url);
+  // there is a bunch of any magic going on here, but who the fuck wants to write a whole new disposable type for just 1 key
+  const models = response.data.models as any;
+  const formattedModels = models.map((val: any) => {
+    return {
+      id: val.name,
+      name: val.name,
+      providerInfo: { local_model: true },
+    };
+  });
+  return formattedModels as Model[];
+}
+
+function formatLocalModelsAsOptions(localModels: Model[]) {
+  const options = localModels.map((val) => {
+    return {
+      name: val.name,
+      value: val,
+      description:
+        "models served by custom provider likely llama.cpp/ollama/lm-studio",
+    };
+  });
+  return options;
+}
+
 async function createModel(
   selectedModel: Model,
   connectedProviders: ConnectedProvidersList,
@@ -54,15 +84,15 @@ async function createModel(
   }
 
   // incase its a local model
-  if (selectedModel.name == LOCAL_MODEL) {
+  if (selectedModel.providerInfo?.local_model) {
     const auth = connectedProviders[LOCAL_PROVIDER] as LocalConnectedProvider; // only one endpoint at this point (users using multiple got to be lesser)
     if (!auth?.baseUrl) {
       toast.error("Local provider base url missing (use /connect)");
       return;
     }
     return createOpenAICompatible({
-      name: LOCAL_MODEL,
-      baseURL: "http://127.0.0.1:8080/v1",
+      name: selectedModel.name,
+      baseURL: auth.baseUrl,
       includeUsage: true,
     });
   }
@@ -116,5 +146,7 @@ export {
   modelsCached,
   cachedModels,
   fetchAndCacheModels,
+  getLocalModels,
+  formatLocalModelsAsOptions,
   createModel,
 };

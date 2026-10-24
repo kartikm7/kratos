@@ -11,19 +11,23 @@ Just a simple tracker for what's next for Kratos
 - [ ] Each mode should serve it's purpose (`build`, `discuss` and `court`)
   - [x] Build
     - Now this is the velocity driving mode,
-    but that does not necessarily mean it does everything
+      but that does not necessarily mean it does everything
   - [x] Discuss
     - This is in good shape now, so let's leave it at this for now
   - [ ] Court
 - [ ] Add Evals
   - This will help test out LLM outputs, rather critical for that
+- [ ] Build Bugs
+  - [x] Module not found
+  - [ ] Web-browser tool not working
+    - This is most likely due to where the puppeteer binary is being saved
 
 UX Features
 
-- [ ] Better UX in Input
+- [x] Better UX in Input
   - Currently after N number of chars, it looks janky
   - [ ] Add markdown support
-  - [ ] Expand the input to support new lines
+  - [x] Expand the input to support new lines
 
 Bugs
 

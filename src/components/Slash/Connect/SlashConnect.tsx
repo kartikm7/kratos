@@ -1,33 +1,90 @@
 import { useDialog, type DialogActions } from "@opentui-ui/dialog/react";
 import { useState } from "react";
-import { appendApiKey } from "../../../utils/auth";
+import { saveProviderConfig } from "../../../utils/auth";
 import { Combobox } from "../../../ui/Combobox";
 import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
-import { modelsListAtom } from "../../../state/atoms";
-import { useAtomValue } from "jotai";
+import { connectedProvidersAtom, modelsListAtom } from "../../../state/atoms";
+import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
+import { LOCAL_PROVIDER } from "../../../utils/constants";
+import type { ConnectedProvider } from "../../../state/types";
 import { useToast } from "../../../hooks/useToast";
 
 const SlashConnectDialog = () => {
   const [text, setText] = useState("");
   const list = useAtomValue(modelsListAtom);
-  const [comboxboxValue, setComboboxValue] = useState<
+  const setConnectedProviders = useSetAtom(connectedProvidersAtom);
+  const [comboboxValue, setComboboxValue] = useState<
     SelectOption | undefined
   >();
   const dialog = useDialog();
-  const {toast} = useToast()
+  const { toast } = useToast();
   const flatenned = Object.entries(list ?? {}).map((entry) => {
     return { name: entry[0], value: entry[0], description: "" };
   });
+
+  const updatePersistedState = (
+    provider: string,
+    config: ConnectedProvider,
+  ) => {
+    saveProviderConfig(provider, config);
+    setConnectedProviders((prev) => ({
+      ...(prev ?? {}),
+      [provider]: config,
+    }));
+  };
+
+  const providerOptions = [
+    {
+      name: `${LOCAL_PROVIDER} (llamacpp, ollama, lm studio, etc)`,
+      value: LOCAL_PROVIDER,
+      description:
+        "Use your llamacpp, ollama, lm studio open ai compatible endpoints",
+    },
+    ...Object.entries(list ?? {}).map(([providerName]) => ({
+      name: providerName,
+      value: providerName,
+      description: "",
+    })),
+  ];
+
   const handleSubmit = () => {
     try {
-      if (!comboxboxValue) {
+      if (!comboboxValue) {
         toast.error("Provider name is missing dawg");
-        return; // early return
+        return;
       }
-      appendApiKey({ provider: comboxboxValue.name, apiKey: text });
+
+      if (!text.trim()) {
+        toast.error("API key is missing");
+        return;
+      }
+
+      const isLocalProvider = comboboxValue.value === LOCAL_PROVIDER;
+      const provider = comboboxValue.value;
+      let config: ConnectedProvider;
+
+      // I wish this didn't need to be written like this for the lsp to understand
+      if (isLocalProvider) {
+        config = {
+          type: LOCAL_PROVIDER,
+          provider: LOCAL_PROVIDER,
+          baseUrl: text,
+        };
+      } else {
+        config = {
+          type: "api",
+          key: text,
+        };
+      }
+
+      updatePersistedState(provider, config);
+
+      const message = isLocalProvider
+        ? "Welcome to the PC master race big man!"
+        : `${comboboxValue.value} api key has been added!`;
+      toast.success(message);
       dialog.closeAll();
-      toast.success(`${comboxboxValue.value} api key has been added!`);
     } catch (error) {
       toast.error(`Something went wrong ${error}`);
       console.log("Something went wrong", error);
@@ -37,18 +94,24 @@ const SlashConnectDialog = () => {
   return (
     <DialogRoot>
       <DialogHeader>
-        {comboxboxValue ? "Enter you API key" : "Choose a model provider"}
+        {!comboboxValue
+          ? "Choose a model provider"
+          : comboboxValue.value === LOCAL_PROVIDER
+            ? "Enter your local provider base URL"
+            : "Enter your API key"}
       </DialogHeader>
-      {!comboxboxValue ? (
+      {!comboboxValue ? (
         <Combobox
           setSubmitValue={setComboboxValue}
           placeholder="Model provider"
-          options={flatenned}
+          options={providerOptions}
         />
       ) : (
         <>
           <input
-            placeholder="API key"
+            placeholder={
+              comboboxValue.value === LOCAL_PROVIDER ? "base url" : "api key"
+            }
             onSubmit={handleSubmit}
             onInput={setText}
             value={text}

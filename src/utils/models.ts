@@ -2,16 +2,23 @@ import axios from "axios";
 import path from "path";
 import fs from "fs";
 import { AppDirectory, makeAppDir } from "./os";
+import type {
+  ApiConnectedProvider,
+  ConnectedProvidersList,
+  LocalConnectedProvider,
+  Model,
+} from "../state/types";
 import { toast } from "@opentui-ui/toast/react";
-import type { ConnectedProvidersList, Model } from "../state/types";
+import { GET_LOCAL_MODEL_ENDPOINT, LOCAL_PROVIDER } from "./constants";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { Providers } from "./constants";
+import urlJoin from "url-join";
 
 const location = path.join(AppDirectory, "models.json");
+
 async function getModels() {
   const response = await axios.get("https://models.dev/api.json");
-  const data = response.data;
-  return JSON.stringify(data);
+  return JSON.stringify(response.data);
 }
 
 function cacheModels(data: string) {
@@ -37,10 +44,60 @@ async function fetchAndCacheModels(forceRefresh = false) {
   return models;
 }
 
+async function getLocalModels(connectedProviders: ConnectedProvidersList = {}) {
+  const auth = connectedProviders[LOCAL_PROVIDER] as LocalConnectedProvider; // only one endpoint at this point (users using multiple got to be lesser)
+  if (!auth) throw new Error("No Local Provider Found");
+  const url = urlJoin(auth.baseUrl, GET_LOCAL_MODEL_ENDPOINT);
+  const response = await axios.get(url);
+  // there is a bunch of any magic going on here, but who the fuck wants to write a whole new disposable type for just 1 key
+  const models = response.data.models as any;
+  const formattedModels = models.map((val: any) => {
+    return {
+      id: val.name,
+      name: val.name,
+      providerInfo: { local_model: true },
+    };
+  });
+  return formattedModels as Model[];
+}
+
+function formatLocalModelsAsOptions(localModels: Model[]) {
+  const options = localModels.map((val) => {
+    return {
+      name: val.name,
+      value: val,
+      description:
+        "models served by custom provider likely llama.cpp/ollama/lm-studio",
+    };
+  });
+  return options;
+}
+
 async function createModel(
   selectedModel: Model,
   connectedProviders: ConnectedProvidersList,
 ) {
+  // basic input validation
+  if (!connectedProviders) {
+    toast.error("Connected providers is empty");
+    return;
+  }
+
+  // incase its a local model
+  if (selectedModel.providerInfo?.local_model) {
+    const auth = connectedProviders[LOCAL_PROVIDER] as LocalConnectedProvider; // only one endpoint at this point (users using multiple got to be lesser)
+    if (!auth?.baseUrl) {
+      toast.error("Local provider base url missing (use /connect)");
+      return;
+    }
+    return createOpenAICompatible({
+      name: selectedModel.name,
+      baseURL: auth.baseUrl,
+      includeUsage: true,
+    });
+  }
+
+  // api based model
   if (!selectedModel.providerInfo?.npm) return;
   const pkg = await (Providers as any)[selectedModel.providerInfo.npm](); // this is janky but works
   const pkgName = selectedModel.providerInfo?.npm;
@@ -50,13 +107,13 @@ async function createModel(
     toast.error("Could not import model package");
     return;
   }
-  const providerName = selectedModel.providerInfo?.name;
+  const providerName = selectedModel.providerInfo?.name || "";
   if (!providerName) {
     toast.error("Provider name is missing");
     return;
   }
 
-  const auth = connectedProviders[providerName];
+  const auth = connectedProviders[providerName] as ApiConnectedProvider;
 
   // OpenAI Compatible
   if (pkgName && pkgName.includes("openai-compatible")) {
@@ -78,10 +135,7 @@ async function createModel(
     );
     createModel = pkg[dynamicModuleName || ""];
   }
-  if (!connectedProviders) {
-    toast.error("Connected providers is empty");
-    return;
-  }
+
   const model = createModel({ apiKey: auth?.key });
   return model;
 }
@@ -92,5 +146,7 @@ export {
   modelsCached,
   cachedModels,
   fetchAndCacheModels,
+  getLocalModels,
+  formatLocalModelsAsOptions,
   createModel,
 };

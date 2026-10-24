@@ -38,8 +38,10 @@ type Model = {
     npm?: string;
     name: string;
     api?: string;
+    local_model?: boolean;
   };
 };
+
 type ProviderDetails = {
   id?: string;
   env?: string[];
@@ -54,30 +56,39 @@ type ModelsList = {
 };
 
 type ConnectedProvidersList = {
-  [key: string]: {
-    key: string;
-    type: "api";
-  };
+  [key: string]: ConnectedProvider;
 };
 
+type ApiConnectedProvider = {
+  type: "api";
+  key: string;
+};
+
+type LocalConnectedProvider = {
+  type: "local";
+  provider: string;
+  baseUrl: string;
+};
+
+type ConnectedProvider = ApiConnectedProvider | LocalConnectedProvider;
 type AiMessage =
-  | TextPart
-  | FilePart
-  | ReasoningUIPart
-  | ToolCallPart
-  | ToolResultPart;
+  TextPart | FilePart | ReasoningUIPart | ToolCallPart | ToolResultPart;
 type MessageStream = Array<AiMessage>;
 
 type Toast = {
   message: string;
-  type: "success" | "error" | "info"
-} | null
+  type: "success" | "error" | "info";
+} | null;
 
 export {
-  type Model, type ProviderDetails,
+  type Model,
+  type ProviderDetails,
   type ModelsList,
   type ConnectedProvidersList,
+  type ConnectedProvider,
+  type ApiConnectedProvider,
+  type LocalConnectedProvider,
   type AiMessage,
   type MessageStream,
-  type Toast
+  type Toast,
 };

@@ -11,8 +11,9 @@ import { saveSelectedModel } from "../../../utils/preferences";
 import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
 import type { Model, ModelsList } from "../../../state/types";
-import { createModel } from "../../../utils/models";
+import { createModel, getLocalModels } from "../../../utils/models";
 import { useToast } from "../../../hooks/useToast";
+import { useEffect, useState } from "react";
 
 // list based on connectedProviders
 const SlashModelDialog = () => {
@@ -20,10 +21,9 @@ const SlashModelDialog = () => {
   const setLlm = useSetAtom(llmAtom);
   const setSelectedModel = useSetAtom(selectedModelAtom);
   const connectedProviders = useAtomValue(connectedProvidersAtom);
-  const {toast} = useToast()
+  const { toast } = useToast();
   const dialog = useDialog();
-  let availableModels = [] as Model[];
-
+  const availableModels = [] as Model[];
   // flatenning it to be {modelInfo + providerInfo}[]
   Object.entries(list ?? {}).forEach((entry) => {
     if (connectedProviders && connectedProviders[entry[0]]) {
@@ -33,19 +33,38 @@ const SlashModelDialog = () => {
           id: entry[1].id,
           npm: entry[1].npm,
           name: entry[0],
-          api: entry[1].api
+          api: entry[1].api,
         };
         availableModels.push(modelEntry[1]);
       });
     }
   });
-  const options = availableModels.map((val) => {
-    return {
-      name: val.name,
-      value: val,
-      description: val.providerInfo?.name || "",
-    };
-  });
+
+  const [options, setOptions] = useState<SelectOption[]>(
+    availableModels.map((val) => {
+      return {
+        name: val.name,
+        value: val,
+        description: val.providerInfo?.name || "",
+      };
+    }),
+  );
+
+  useEffect(() => {
+    addLocalModelsToOptions();
+    async function addLocalModelsToOptions() {
+      const localModels = await getLocalModels(connectedProviders);
+      const localModelOptions = localModels.map((val) => {
+        return {
+          name: val.name,
+          value: val,
+          description:
+            "models served by custom provider likely llama.cpp/ollama/lm-studio",
+        };
+      });
+      setOptions((pre) => [...localModelOptions, ...pre]);
+    }
+  }, []);
 
   const handleSubmit = async (comboxboxValue: SelectOption | undefined) => {
     try {

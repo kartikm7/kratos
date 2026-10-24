@@ -7,10 +7,9 @@ import {
   collapseAtom,
   connectedProvidersAtom,
   llmAtom,
-  modelsListAtom,
   selectedModelAtom,
 } from "./state/atoms";
-import { createModel, fetchAndCacheModels } from "./utils/models";
+import { createModel } from "./utils/models";
 import { readAuth } from "./utils/auth";
 import { readSelectedModel } from "./utils/preferences";
 import type { Model } from "./state/types";
@@ -21,7 +20,6 @@ import { ChatProvider } from "./providers/ChatProvider";
 import { Toaster } from "./ui/Toaster";
 
 export default function App() {
-  const setModelsList = useSetAtom(modelsListAtom);
   const setConnectedProvidersList = useSetAtom(connectedProvidersAtom);
   const setSelectedModel = useSetAtom(selectedModelAtom);
   const setLlm = useSetAtom(llmAtom);

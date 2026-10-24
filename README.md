@@ -14,9 +14,7 @@ Engineering is a joyous field, it's fun like really really fun and AI is suppose
 
 ## Current Task List
 
-- [ ] Add slash commands (this is key)
-- [ ] Add bring your API key support (Basic setup flow)
-- [ ] Build underlying business logic
+This is being maintained within `/docs``
 
 ## Setup Kratos
 

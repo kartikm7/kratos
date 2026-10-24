@@ -1,8 +1,7 @@
 import { DialogProvider } from "@opentui-ui/dialog/react";
-import { toast, Toaster } from "@opentui-ui/toast/react";
 import { RootLayout } from "./components/AppLayout";
 import { Chat } from "./components/Chat/Chat";
-import { useEffect } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { useSetAtom } from "jotai";
 import {
   collapseAtom,
@@ -15,7 +14,11 @@ import { createModel, fetchAndCacheModels } from "./utils/models";
 import { readAuth } from "./utils/auth";
 import { readSelectedModel } from "./utils/preferences";
 import type { Model } from "./state/types";
-import { useKeyboard } from "@opentui/react";
+import { useKeyboard, useTerminalDimensions } from "@opentui/react";
+import { DimensionsContext } from "./context/context";
+import { useRefreshModelsJson } from "./hooks/useRefreshModelsJson";
+import { ChatProvider } from "./providers/ChatProvider";
+import { Toaster } from "./ui/Toaster";
 
 export default function App() {
   const setModelsList = useSetAtom(modelsListAtom);
@@ -23,6 +26,8 @@ export default function App() {
   const setSelectedModel = useSetAtom(selectedModelAtom);
   const setLlm = useSetAtom(llmAtom);
   const setCollapse = useSetAtom(collapseAtom);
+  const { width, height } = useTerminalDimensions();
+  const { fetchAndSetModelsList } = useRefreshModelsJson();
 
   // Global shortcut's to be defined here!
   useKeyboard((key) => {
@@ -40,34 +45,28 @@ export default function App() {
     setSelectedModel(selectedModel); // load cached model
     setConnectedProvidersList(connectedProviders);
 
-    // this is just getting data for whatever models we currently have
-
-    async function fetchAndSetModelsList() {
-      const modelsList = await fetchAndCacheModels();
-      if (!modelsList) {
-        toast.error("Model list is empty");
-        return; // returning early
-      } else setModelsList(JSON.parse(JSON.parse(modelsList))); // this is so fucking weird
-
-      if (selectedModel) {
-        // creating model
-        const model = createModel(
-          selectedModel as Model,
-          connectedProviders || {},
-        );
-        setLlm(() => model);
-      }
+    if (selectedModel) {
+      // creating model
+      const model = createModel(
+        selectedModel as Model,
+        connectedProviders || {},
+      );
+      setLlm(() => model);
     }
   }, []);
 
   return (
     <>
-      <Toaster position="top-right" />
-      <DialogProvider backdropOpacity={0}>
-        <RootLayout>
-          <Chat />
-        </RootLayout>
-      </DialogProvider>
+      <DimensionsContext value={{ width, height }}>
+        <ChatProvider>
+          <Toaster />
+          <DialogProvider backdropOpacity={0}>
+            <RootLayout>
+              <Chat />
+            </RootLayout>
+          </DialogProvider>
+        </ChatProvider>
+      </DimensionsContext>
     </>
   );
 }

@@ -9,8 +9,9 @@ import type {
   Model,
 } from "../state/types";
 import { toast } from "@opentui-ui/toast/react";
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { LOCAL_MODEL, LOCAL_PROVIDER } from "./constants";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import { Providers } from "./constants";
 
 const location = path.join(AppDirectory, "models.json");
 
@@ -46,7 +47,6 @@ async function createModel(
   selectedModel: Model,
   connectedProviders: ConnectedProvidersList,
 ) {
-  console.log(selectedModel);
   // basic input validation
   if (!connectedProviders) {
     toast.error("Connected providers is empty");
@@ -60,7 +60,6 @@ async function createModel(
       toast.error("Local provider base url missing (use /connect)");
       return;
     }
-    console.log(auth);
     return createOpenAICompatible({
       name: LOCAL_MODEL,
       baseURL: "http://127.0.0.1:8080/v1",
@@ -69,7 +68,11 @@ async function createModel(
   }
 
   // api based model
-  const pkg = await import(`${selectedModel.providerInfo?.npm}`);
+  if (!selectedModel.providerInfo?.npm) return;
+  const pkg = await (Providers as any)[selectedModel.providerInfo.npm](); // this is janky but works
+  const pkgName = selectedModel.providerInfo?.npm;
+  const baseURL = selectedModel.providerInfo?.api || ""; // this only populates in case of openai-compatible
+
   if (!pkg) {
     toast.error("Could not import model package");
     return;
@@ -80,6 +83,19 @@ async function createModel(
     return;
   }
 
+  const auth = connectedProviders[providerName] as ApiConnectedProvider;
+
+  // OpenAI Compatible
+  if (pkgName && pkgName.includes("openai-compatible")) {
+    return createOpenAICompatible({
+      name: selectedModel.name,
+      baseURL: baseURL,
+      apiKey: auth?.key,
+      includeUsage: true,
+    });
+  }
+
+  // Proprietary Model Packages Logic
   const mostlyFunctionName = `create${providerName[0]?.toUpperCase() + providerName.slice(1)}`;
   let createModel = pkg[mostlyFunctionName];
   if (!createModel) {
@@ -89,8 +105,8 @@ async function createModel(
     );
     createModel = pkg[dynamicModuleName || ""];
   }
-  const auth = connectedProviders[providerName] as ApiConnectedProvider;
-  const model = createModel({ apiKey: auth?.key || "" });
+
+  const model = createModel({ apiKey: auth?.key });
   return model;
 }
 

@@ -37,6 +37,7 @@ type Model = {
     id?: string;
     npm?: string;
     name: string;
+    api?: string;
   };
 };
 
@@ -45,6 +46,7 @@ type ProviderDetails = {
   env?: string[];
   npm?: string;
   doc?: string;
+  api?: string;
   models: { [key: string]: Model };
 };
 
@@ -76,9 +78,13 @@ type AiMessage =
   | ToolResultPart;
 type MessageStream = Array<AiMessage>;
 
+type Toast = {
+  message: string;
+  type: "success" | "error" | "info"
+} | null
+
 export {
-  type Model,
-  type ProviderDetails,
+  type Model, type ProviderDetails,
   type ModelsList,
   type ConnectedProvidersList,
   type ConnectedProvider,
@@ -86,4 +92,5 @@ export {
   type LocalConnectedProvider,
   type AiMessage,
   type MessageStream,
+  type Toast
 };

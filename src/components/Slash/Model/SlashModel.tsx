@@ -10,10 +10,10 @@ import {
 import { saveSelectedModel } from "../../../utils/preferences";
 import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
-import { toast } from "@opentui-ui/toast/react";
 import type { Model, ModelsList } from "../../../state/types";
 import { createModel } from "../../../utils/models";
 import { LOCAL_MODEL, LOCAL_PROVIDER } from "../../../utils/constants";
+import { useToast } from "../../../hooks/useToast";
 
 // list based on connectedProviders
 const SlashModelDialog = () => {
@@ -21,6 +21,7 @@ const SlashModelDialog = () => {
   const setLlm = useSetAtom(llmAtom);
   const setSelectedModel = useSetAtom(selectedModelAtom);
   const connectedProviders = useAtomValue(connectedProvidersAtom);
+  const { toast } = useToast();
   const dialog = useDialog();
   let availableModels = [] as Model[];
 
@@ -33,6 +34,7 @@ const SlashModelDialog = () => {
           id: entry[1].id,
           npm: entry[1].npm,
           name: entry[0],
+          api: entry[1].api,
         };
         availableModels.push(modelEntry[1]);
       });

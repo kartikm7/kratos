@@ -23,7 +23,7 @@ export const SupportBlock = ({
       <text
         attributes={TextAttributes.ITALIC}
         fg={theme.dark.palette.ink}
-        content={capitalise(title) || ""}
+        content={"└ " + capitalise(title) || ""}
         opacity={0.75}
       />
       {!collapse && (

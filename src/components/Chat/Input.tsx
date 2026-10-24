@@ -1,43 +1,48 @@
-import type { InputRenderable } from "@opentui/core";
-import {
-  useKeyboard,
-  useTerminalDimensions,
-  type InputProps,
-} from "@opentui/react";
+import type { TextareaRenderable } from "@opentui/core";
+import { useKeyboard, type TextareaProps } from "@opentui/react";
 import "opentui-spinner/react";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { SlashOptions } from "../Slash/mapping";
 import { SlashConnect } from "../Slash/Connect/SlashConnect";
 import { useDialog, useDialogState } from "@opentui-ui/dialog/react";
 import { SlashModel } from "../Slash/Model/SlashModel";
-import { useAtomValue } from "jotai";
-import { themeAtom } from "../../state/atoms";
+import { useAtomValue, useSetAtom } from "jotai";
+import { chatIdAtom, themeAtom } from "../../state/atoms";
 import { Select } from "../../ui/Select";
+import { DimensionsContext } from "../../context/context";
+import { useRefreshModelsJson } from "../../hooks/useRefreshModelsJson";
+import { useChatContext } from "../../hooks/useChatContext";
+import { SlashResume } from "../Slash/Resume/SlashResume";
 
-interface CustomInputProps extends InputProps {
+interface CustomInputProps extends TextareaProps {
   loading?: boolean;
   autocomplete?: boolean;
+  onTextChange: (text: string) => void;
 }
 
 export const Input = ({
   placeholder = "",
   autocomplete = true,
   loading = false,
+  onSubmit = () => {},
   ...props
 }: CustomInputProps) => {
-  const { width } = useTerminalDimensions();
+  const { width } = useContext(DimensionsContext);
   const [options, setOptions] = useState(SlashOptions);
   const [index, setIndex] = useState(0);
   const [isSlashTriggered, setSlashTriggered] = useState(false);
   const dialog = useDialog();
   const dialogOpen = useDialogState((s) => s.isOpen);
-  const ref = useRef<InputRenderable>(null);
+  const ref = useRef<TextareaRenderable>(null);
   const theme = useAtomValue(themeAtom);
+  const setChatId = useSetAtom(chatIdAtom);
+  const { setMessages } = useChatContext();
+  const { fetchAndSetModelsList } = useRefreshModelsJson();
 
   useEffect(() => {
-    if (props.value?.trim().startsWith("/")) {
+    if (ref.current?.plainText.trim().startsWith("/")) {
       setSlashTriggered(true);
-      const actualText = props.value.slice(1);
+      const actualText = ref.current?.plainText.slice(1);
       setOptions((pre) => {
         const filtered = pre.filter((val) => {
           return (
@@ -55,7 +60,7 @@ export const Input = ({
       setSlashTriggered(false);
       setOptions(SlashOptions);
     };
-  }, [props.value]);
+  }, [ref.current?.plainText]);
 
   useKeyboard((key) => {
     switch (key.name) {
@@ -76,7 +81,7 @@ export const Input = ({
       case "return":
         // this is actually the submit state
         if (isSlashTriggered) {
-          props.onSubmit = () => {}; // because we can't submit an empty function?
+          onSubmit = () => {}; // because we can't submit an empty function?
           handleSelectionSubmit();
         }
         break;
@@ -92,7 +97,7 @@ export const Input = ({
     if (!options.includes(selection)) return;
 
     // setting states back to initial values
-    if (ref.current) ref.current.value = "";
+    if (ref.current) ref.current.clear();
     setIndex(0);
 
     switch (selection.name) {
@@ -102,13 +107,30 @@ export const Input = ({
       case "/model":
         SlashModel(dialog);
         break;
+      case "/resume-chat":
+        SlashResume(dialog);
+        break;
+      case "/refresh-models":
+        fetchAndSetModelsList({ forceRefresh: true, successToast: true });
+        break;
+      case "/clear":
+        // I hate this, the handling is so all over the place. But for now we good.
+        setChatId(undefined);
+        setMessages(() => []);
+        break;
       default:
         break;
     }
   };
 
   return (
-    <box flexDirection="column" columnGap={2} position="relative">
+    <box
+      flexDirection="column"
+      columnGap={2}
+      position="relative"
+      height="100%"
+      justifyContent="flex-end"
+    >
       {autocomplete && isSlashTriggered && (
         <Select
           position="absolute"
@@ -128,7 +150,29 @@ export const Input = ({
         width={width}
         paddingX={1}
       >
-        <input ref={ref} placeholder={placeholder} focused={true} {...props} />
+        <textarea
+          ref={ref}
+          placeholder={placeholder}
+          overflow="scroll"
+          minHeight={1}
+          maxHeight={3}
+          onContentChange={() => {
+            props.onTextChange(ref.current?.plainText || "");
+          }}
+          onSubmit={() => {
+            ref.current?.clear();
+            if (onSubmit) onSubmit();
+          }}
+          keyBindings={[
+            { name: "return", ctrl: false, action: "submit" },
+            { name: "return", shift: true, action: "newline" }, // Fucking hell Windows, does not send shift + enter event
+            { name: "return", ctrl: true, action: "newline" },
+            { name: "U", ctrl: true, action: "delete" },
+            { name: "z", ctrl: true, action: "undo" },
+            { name: "z", ctrl: true, meta: true, action: "redo" },
+          ]}
+          {...props}
+        />
       </box>
     </box>
   );

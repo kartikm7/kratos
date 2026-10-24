@@ -6,9 +6,9 @@ import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
 import { connectedProvidersAtom, modelsListAtom } from "../../../state/atoms";
 import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
-import { toast } from "@opentui-ui/toast/react";
 import { LOCAL_PROVIDER } from "../../../utils/constants";
 import type { ConnectedProvider } from "../../../state/types";
+import { useToast } from "../../../hooks/useToast";
 
 const SlashConnectDialog = () => {
   const [text, setText] = useState("");
@@ -18,6 +18,10 @@ const SlashConnectDialog = () => {
     SelectOption | undefined
   >();
   const dialog = useDialog();
+  const { toast } = useToast();
+  const flatenned = Object.entries(list ?? {}).map((entry) => {
+    return { name: entry[0], value: entry[0], description: "" };
+  });
 
   const updatePersistedState = (
     provider: string,
@@ -44,7 +48,7 @@ const SlashConnectDialog = () => {
     })),
   ];
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     try {
       if (!comboboxValue) {
         toast.error("Provider name is missing dawg");

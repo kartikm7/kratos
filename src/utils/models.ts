@@ -1,5 +1,5 @@
 import axios from "axios";
-import path, { format } from "path";
+import path from "path";
 import fs from "fs";
 import { AppDirectory, makeAppDir } from "./os";
 import type {

@@ -50,11 +50,11 @@ async function getLocalModels(connectedProviders: ConnectedProvidersList = {}) {
   const url = urlJoin(auth.baseUrl, GET_LOCAL_MODEL_ENDPOINT);
   const response = await axios.get(url);
   // there is a bunch of any magic going on here, but who the fuck wants to write a whole new disposable type for just 1 key
-  const models = response.data.models as any;
+  const models = response.data.data as any;
   const formattedModels = models.map((val: any) => {
     return {
-      id: val.name,
-      name: val.name,
+      id: val.id,
+      name: val.id,
       providerInfo: { local_model: true },
     };
   });

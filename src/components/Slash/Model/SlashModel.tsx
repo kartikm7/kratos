@@ -58,8 +58,7 @@ const SlashModelDialog = () => {
         return {
           name: val.name,
           value: val,
-          description:
-            "models served by custom provider likely llama.cpp/ollama/lm-studio",
+          description: "custom provider likely llama.cpp/ollama/lm-studio",
         };
       });
       setOptions((pre) => [...localModelOptions, ...pre]);

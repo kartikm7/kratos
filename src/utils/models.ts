@@ -22,7 +22,6 @@ async function getModels() {
 }
 
 function cacheModels(data: string) {
-  makeAppDir();
   console.log("Caching model information at ", location);
   fs.writeFileSync(location, data);
 }

@@ -2,6 +2,7 @@ import { createCliRenderer } from "@opentui/core";
 import { createRoot, useKeyboard } from "@opentui/react";
 import App from "./App";
 import { BashFactory } from "./utils/tools/bashTool/bashFactory";
+import { makeAppDir } from "./utils/os";
 
 function Main() {
   // this is really helpful for figuring out what is propogating the memory leak
@@ -12,6 +13,8 @@ function Main() {
 
   return <App />;
 }
+
+makeAppDir(); // rather than making it any where else it should be made here!
 
 // this fixes Performance.measure error - but not sure if this is right or not
 globalThis.performance.measure = (() => {}) as any; // stub if still missing

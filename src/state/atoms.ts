@@ -18,7 +18,7 @@ const connectedProviders = readAuth();
 const selectedModel = readSelectedModel();
 
 // creating model
-const model = createModel(selectedModel as Model, connectedProviders || {});
+const model = createModel(selectedModel as Model | undefined, connectedProviders || {});
 export const llmAtom = atom<any>(model); // need to figure a generic type for this
 // TODO: Most likely string is not the right type, when I start adding tools this will most likely cause a problem
 export const selectedModelAtom = atom<Model>();

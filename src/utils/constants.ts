@@ -7,6 +7,7 @@ export const LOCAL_PROVIDER = "local"; // stupid but intuitive
 export const GET_LOCAL_MODEL_ENDPOINT = "models";
 export const CHAT_MODES = ["build", "discuss", "court"];
 export type ChatModes = "build" | "discuss" | "court";
+export const MAX_TOAST_TEXT_LENGTH = 40;
 
 // Some common paths
 export const MemoriesPath = path.join(AppDirectory, "Memories");

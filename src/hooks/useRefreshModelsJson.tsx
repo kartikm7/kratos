@@ -15,7 +15,9 @@ export const useRefreshModelsJson = () => {
       toast.error("Model list is empty");
       return; // returning early
     } else {
-      setModelsList(JSON.parse(JSON.parse(modelsList))); // this is so fucking weird
+      let parsed = JSON.parse(modelsList);
+      if (typeof parsed === "string") parsed = JSON.parse(parsed); // older caches were double encoded
+      setModelsList(parsed);
       successToast && toast.success("Fetched new model list!")
     }
   }

@@ -14,6 +14,7 @@ import type { Model, ModelsList } from "../../../state/types";
 import { createModel, getLocalModels } from "../../../utils/models";
 import { useToast } from "../../../hooks/useToast";
 import { useEffect, useState } from "react";
+import { LOCAL_PROVIDER } from "../../../utils/constants";
 
 // list based on connectedProviders
 const SlashModelDialog = () => {
@@ -53,7 +54,14 @@ const SlashModelDialog = () => {
   useEffect(() => {
     addLocalModelsToOptions();
     async function addLocalModelsToOptions() {
-      const localModels = await getLocalModels(connectedProviders);
+      if (!connectedProviders?.[LOCAL_PROVIDER]) return; // no local provider connected
+      let localModels: Model[];
+      try {
+        localModels = await getLocalModels(connectedProviders);
+      } catch (error) {
+        toast.error(`Could not reach local provider: ${error}`);
+        return;
+      }
       const localModelOptions = localModels.map((val) => {
         return {
           name: val.name,

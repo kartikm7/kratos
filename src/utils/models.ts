@@ -24,7 +24,7 @@ async function getModels() {
 function cacheModels(data: string) {
   makeAppDir();
   console.log("Caching model information at ", location);
-  fs.writeFileSync(location, JSON.stringify(data));
+  fs.writeFileSync(location, data);
 }
 
 function modelsCached(): boolean {
@@ -74,10 +74,11 @@ function formatLocalModelsAsOptions(localModels: Model[]) {
 }
 
 async function createModel(
-  selectedModel: Model,
+  selectedModel: Model | undefined,
   connectedProviders: ConnectedProvidersList,
 ) {
   // basic input validation
+  if (!selectedModel) return; // no model selected yet (use /model)
   if (!connectedProviders) {
     toast.error("Connected providers is empty");
     return;

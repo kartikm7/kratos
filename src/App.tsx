@@ -39,7 +39,8 @@ export default function App() {
   useSelectionHandler((selection) => {
     try {
       const text = selection.getSelectedText();
-      renderer.copyToClipboardOSC52(text, ClipboardTarget.Primary);
+      if (text.length > 0)
+        renderer.copyToClipboardOSC52(text, ClipboardTarget.Primary);
       // TODO: Update state somewhere! (Most likely in DynamicInfoBar)
     } catch (e) {
       toast.error((e as Error).message ?? "Error while copying");

@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install and Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -39,9 +41,18 @@ jobs:
       - name: Build
         run: bun build --target=bun-${{ matrix.version }} --trim --compile --format=esm  ./src/index.tsx --outfile ./dist/kratos-${{ matrix.version }}
 
+      - name: Generate a changelog
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --verbose
+        env:
+          OUTPUT: CHANGELOG.md
+          GITHUB_REPO: ${{ github.repository }}
+
       - name: Release
         uses: softprops/action-gh-release@v3
         with:
           files: dist/*
-          generate_release_notes: true
+          body_path: CHANGELOG.md
           token: ${{ secrets.RELEASE_TOKEN }}

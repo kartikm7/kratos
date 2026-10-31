@@ -13,6 +13,7 @@ import { DimensionsContext } from "../../context/context";
 import { useRefreshModelsJson } from "../../hooks/useRefreshModelsJson";
 import { useChatContext } from "../../hooks/useChatContext";
 import { SlashResume } from "../Slash/Resume/SlashResume";
+import { SlashRename } from "../Slash/Rename/SlashRename";
 
 interface CustomInputProps extends TextareaProps {
   loading?: boolean;
@@ -117,6 +118,9 @@ export const Input = ({
         // I hate this, the handling is so all over the place. But for now we good.
         setChatId(undefined);
         setMessages(() => []);
+        break;
+      case "/rename":
+        SlashRename(dialog);
         break;
       default:
         break;

@@ -10,4 +10,5 @@ export const SlashOptions = [
     description: "resume one of your older chats",
   },
   { name: "/clear", description: "clears your on-going chat" },
+  { name: "/rename", description: "rename the on-going chat" },
 ];

@@ -41,6 +41,12 @@ export const useDb = () => {
     }
   };
 
+  const updateChatTitle = async (title: string) => {
+    if (!chatId) throw new Error("No active chat to rename");
+    await db.update(chatsTable).set({ title }).where(eq(chatsTable.id, chatId));
+    console.log("[DB] Chat title updated successfully");
+  };
+
   const getAllChats = () => {
     try {
       const res = db
@@ -98,5 +104,12 @@ export const useDb = () => {
     return filteredChat;
   };
 
-  return { appendToChat, getAllChats, getAllChatsInCwd, getChat, filterChat };
+  return {
+    appendToChat,
+    updateChatTitle,
+    getAllChats,
+    getAllChatsInCwd,
+    getChat,
+    filterChat,
+  };
 };

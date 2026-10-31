@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run --watch src/index.tsx"
+    "dev": "bun run --watch src/index.tsx",
+    "build": "bun build --trim --compile --minify --bytecode --format=esm  ./src/index.tsx --outfile ./dist/kratos"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^9.6.0",

@@ -6,30 +6,33 @@ on:
       - "v*.*.*"
 
 jobs:
-  strategy:
-    matrix:
-      versions:
-        [
-          linux-x64,
-          linux-arm64,
-          windows-x64,
-          windows-arm64,
-          darwin-x64,
-          darwin-arm64,
-        ]
   release_linux:
     runs-on: ubuntu-latest
     environment: build
+    strategy:
+      matrix:
+        version:
+          [
+            linux-x64,
+            linux-arm64,
+            windows-x64,
+            windows-arm64,
+            darwin-x64,
+            darwin-arm64,
+          ]
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Install and Setup Bun
-        uses: actions/setup-bun@v2
+        uses: oven-sh/setup-bun@v2
 
       - name: Install Dependencies
         run: bun install
+
+      - name: Install Opentui Core
+        run: bun install --os="*" --cpu="*" @opentui/core
 
       - name: Build
         run: bun build --target=bun-${{ matrix.version }} --trim --compile --format=esm  ./src/index.tsx --outfile ./dist/kratos-${{ matrix.version }}

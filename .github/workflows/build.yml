@@ -42,5 +42,4 @@ jobs:
         with:
           files: dist/*
           generate_release_notes: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,43 @@
+name: Build/release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  strategy:
+    matrix:
+      versions:
+        [
+          linux-x64,
+          linux-arm64,
+          windows-x64,
+          windows-arm64,
+          darwin-x64,
+          darwin-arm64,
+        ]
+  release_linux:
+    runs-on: ubuntu-latest
+    environment: build
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v6
+
+      - name: Install and Setup Bun
+        uses: actions/setup-bun@v2
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Build
+        run: bun build --target=bun-${{ matrix.version }} --trim --compile --format=esm  ./src/index.tsx --outfile ./dist/kratos-${{ matrix.version }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: dist/*
+          generate_release_notes: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

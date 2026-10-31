@@ -8,7 +8,6 @@ import type {
   LocalConnectedProvider,
   Model,
 } from "../state/types";
-import { toast } from "@opentui-ui/toast/react";
 import { GET_LOCAL_MODEL_ENDPOINT, LOCAL_PROVIDER } from "./constants";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { Providers } from "./constants";
@@ -79,7 +78,7 @@ async function createModel(
   // basic input validation
   if (!selectedModel) return; // no model selected yet (use /model)
   if (!connectedProviders) {
-    toast.error("Connected providers is empty");
+    console.error("Connected providers is empty");
     return;
   }
 
@@ -87,7 +86,7 @@ async function createModel(
   if (selectedModel.providerInfo?.local_model) {
     const auth = connectedProviders[LOCAL_PROVIDER] as LocalConnectedProvider; // only one endpoint at this point (users using multiple got to be lesser)
     if (!auth?.baseUrl) {
-      toast.error("Local provider base url missing (use /connect)");
+      console.error("Local provider base url missing (use /connect)");
       return;
     }
     return createOpenAICompatible({
@@ -105,12 +104,12 @@ async function createModel(
   const baseURL = selectedModel.providerInfo?.api || ""; // this only populates in case of openai-compatible
 
   if (!pkg) {
-    toast.error("Could not import model package");
+    console.error("Could not import model package");
     return;
   }
   const providerName = selectedModel.providerInfo?.name || "";
   if (!providerName) {
-    toast.error("Provider name is missing");
+    console.error("Provider name is missing");
     return;
   }
 

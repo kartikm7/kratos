@@ -30,13 +30,7 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install Dependencies
-        run: bun install
-
-      - name: Install Opentui Core
-        run: bun install --os="*" --cpu="*" @opentui/core
-
-      - name: Install @opentui/core-linux-arm64-musl
-        run: bun install @opentui/core-linux-arm64-musl
+        run: bun install --os="*" --cpu="*"
 
       - name: Build
         run: bun build --target=bun-${{ matrix.version }} --trim --compile --format=esm  ./src/index.tsx --outfile ./dist/kratos-${{ matrix.version }}

@@ -7,22 +7,19 @@ on:
 
 jobs:
   release_linux:
+    runs-on: ubuntu-latest
+    environment: build
     strategy:
       matrix:
-        include:
-          - os: "ubuntu-latest"
-            version: "linux-x64"
-          - os: "windows-latest"
-            version: "windows-x64"
-          - os: "windows-11-arm"
-            version: "windows-arm64"
-          - os: "macos-latest"
-            version: "darwin-arm64"
-          - os: "macos-26-intel"
-            version: "darwin-x64"
+        version: [
+            linux-x64,
+            # linux-arm64, not doing this for now
+            windows-x64,
+            windows-arm64,
+            darwin-x64,
+            darwin-arm64,
+          ]
 
-    runs-on: ${{ matrix.os }}
-    environment: build
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
@@ -33,7 +30,7 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install Dependencies
-        run: bun install
+        run: bun install --os="*" --cpu="*"
 
       - name: Build
         run: bun build --target=bun-${{ matrix.version }} --trim --compile --format=esm  ./src/index.tsx --outfile ./dist/kratos-${{ matrix.version }}

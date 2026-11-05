@@ -17,6 +17,7 @@ import { getModeSpecificTools } from "../utils/tools/tools";
 import { useChat, type UseChatHelpers } from "@ai-sdk/react";
 import { useDb } from "./useDb";
 import { z } from "zod/v4";
+import { useMemo } from "react";
 
 export type UseLLM = UseChatHelpers<UIMessage<any, never>>;
 
@@ -66,26 +67,29 @@ export const useLlm = (): UseLLM => {
   if (chatMode === "build") tools = { subAgentTool, ...tools } as ToolSet;
 
   // no model selected yet -> keep the app usable, error only when a message is sent
-  const transport = llm
-    ? new DirectChatTransport({
-        agent: new ToolLoopAgent({
-          model: llm(selectedModel?.id),
-          instructions: systemPrompt,
-          tools: tools as ToolSet, // this shit is needed, but fuck it
-          stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses
-          telemetry: { integrations: [DevToolsTelemetry()] },
-        }),
-      })
-    : {
-        sendMessages: async () => {
-          throw new Error("No model selected (use /model)");
-        },
-        reconnectToStream: async () => null,
-      };
-
+  const transport = useMemo(
+    () =>
+      llm
+        ? new DirectChatTransport({
+            agent: new ToolLoopAgent({
+              model: llm(selectedModel?.id),
+              instructions: systemPrompt,
+              tools: tools as ToolSet, // this shit is needed, but fuck it
+              stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses
+              telemetry: { integrations: [DevToolsTelemetry()] },
+            }),
+          })
+        : {
+            sendMessages: async () => {
+              throw new Error("No model selected (use /model)");
+            },
+            reconnectToStream: async () => null,
+          },
+    [llm, chatMode, selectedModel],
+  );
   const res = useChat({
     transport,
-    onFinish: ({ message, messages }) => {
+    onFinish: ({ message }) => {
       appendToChat(message);
     },
   });

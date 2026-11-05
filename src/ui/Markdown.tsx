@@ -53,7 +53,7 @@ export const Markdown = ({ content, streaming, ...props }: MarkdownProps) => {
         },
         renderer.nativeScene,
       ),
-    [],
+    [theme],
   );
 
   return (

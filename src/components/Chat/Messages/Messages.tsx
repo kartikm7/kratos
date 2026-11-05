@@ -80,7 +80,7 @@ function MessageFactory({
           <Markdown
             key={idx}
             content={part.text}
-            streaming={true}
+            streaming={streaming}
             width={width}
           />
         );

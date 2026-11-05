@@ -68,7 +68,11 @@ export const Chat = () => {
         gap={0.5}
       >
         {messages.length > 0 ? (
-          <scrollbox stickyScroll={true} stickyStart="bottom">
+          <scrollbox
+            scrollbarOptions={{ buffered: true }}
+            stickyScroll={true}
+            stickyStart="bottom"
+          >
             <Messages messages={messages} streaming={status == "streaming"} />
           </scrollbox>
         ) : (

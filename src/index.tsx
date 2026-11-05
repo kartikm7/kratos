@@ -19,6 +19,12 @@ makeAppDir(); // rather than making it any where else it should be made here!
 // this fixes Performance.measure error - but not sure if this is right or not
 globalThis.performance.measure = (() => {}) as any; // stub if still missing
 
+// this is fixes dialog library error (had to take the help of ai here)
+if (!(globalThis as any).requestAnimationFrame) {
+  (globalThis as any).requestAnimationFrame = (cb: (t: number) => void) =>
+    setTimeout(() => cb(performance.now()), 16);
+}
+
 // Function calls outside of react process
 const ReadWriteBashTools = await BashFactory(true);
 const OnlyReadBashTools = await BashFactory(false);

@@ -39,7 +39,7 @@ export const DynamicInfoBar = ({
         <text bg={modeColor} content={" " + capitalise(chatMode) + " "} />
         {loading && (
           <>
-            <spinner name="growHorizontal" color={modeColor} />
+            {/* <spinner name="growHorizontal" color={modeColor} /> */}
             <text marginLeft={1} fg="grey">
               Streaming... (esc to cancel)
             </text>

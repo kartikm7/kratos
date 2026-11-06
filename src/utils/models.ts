@@ -76,7 +76,13 @@ async function createModel(
   connectedProviders: ConnectedProvidersList,
 ) {
   // basic input validation
-  if (!selectedModel) return; // no model selected yet (use /model)
+  if (!selectedModel) {
+    console.error("No model found")
+    return createOpenAICompatible({
+      name: "nothing-selected",
+      baseURL: "fuck this shit",
+    })
+  }
   if (!connectedProviders) {
     console.error("Connected providers is empty");
     return;

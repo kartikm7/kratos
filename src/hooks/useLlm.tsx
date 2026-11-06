@@ -71,20 +71,20 @@ export const useLlm = (): UseLLM => {
     () =>
       llm
         ? new DirectChatTransport({
-            agent: new ToolLoopAgent({
-              model: llm(selectedModel?.id),
-              instructions: systemPrompt,
-              tools: tools as ToolSet, // this shit is needed, but fuck it
-              stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses
-              telemetry: { integrations: [DevToolsTelemetry()] },
-            }),
-          })
+          agent: new ToolLoopAgent({
+            model: llm(selectedModel?.id),
+            instructions: systemPrompt,
+            tools: tools as ToolSet, // this shit is needed, but fuck it
+            stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses
+            telemetry: { integrations: [DevToolsTelemetry()] },
+          }),
+        })
         : {
-            sendMessages: async () => {
-              throw new Error("No model selected (use /model)");
-            },
-            reconnectToStream: async () => null,
+          sendMessages: async () => {
+            throw new Error("No model selected (use /model)");
           },
+          reconnectToStream: async () => null,
+        },
     [llm, chatMode, selectedModel],
   );
   const res = useChat({

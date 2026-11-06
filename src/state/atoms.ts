@@ -9,7 +9,6 @@ import {
 import type { Theme } from "../themes/types";
 import kratosTheme from "../themes/variants/kratos.json" with { type: "json" };
 import type { ChatModes } from "../utils/constants";
-import type { ModelMessage } from "ai";
 import { createModel } from "../utils/models";
 import { readSelectedModel } from "../utils/preferences";
 import { readAuth } from "../utils/auth";

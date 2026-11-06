@@ -48,7 +48,7 @@ export const DynamicInfoBar = ({
       </box>
       <box>
         <AccentText opacity={selectedModel ? 1 : 0.5}>
-          {selectedModel?.id || "Model not found (use /model)"}
+          {selectedModel?.id || "No model selected (Run /connect, then /model)"}
         </AccentText>
       </box>
     </box>

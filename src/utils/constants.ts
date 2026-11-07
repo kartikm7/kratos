@@ -8,6 +8,7 @@ export const GET_LOCAL_MODEL_ENDPOINT = "models";
 export const CHAT_MODES = ["build", "discuss", "court"];
 export type ChatModes = "build" | "discuss" | "court";
 export const MAX_TOAST_TEXT_LENGTH = 40;
+export const STEPS_TO_RENAME_AT = [2, 10, 50, 100]
 
 // Some common paths
 export const MemoriesPath = path.join(AppDirectory, "Memories");

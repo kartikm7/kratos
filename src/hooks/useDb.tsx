@@ -9,12 +9,15 @@ import { CurrentWorkingDirectory } from "../utils/constants";
 export const useDb = () => {
   const [chatId, setChatId] = useAtom(chatIdAtom);
 
-  const init = async () => {
+  const init = async (message?: UIMessage) => {
     let lastInsertRowid = Number(chatId);
     if (!chatId) {
+      // Getting the first message, and updating the title!!
+      let title = ""
+      if (message?.parts[0]?.type === "text") title = message.parts[0].text
       const result = await db
         .insert(chatsTable)
-        .values({ title: crypto.randomUUID(), path: CurrentWorkingDirectory }); // TODO: Generate a Title based on the chat
+        .values({ title: title || crypto.randomUUID(), path: CurrentWorkingDirectory });
       lastInsertRowid = Number(result.lastInsertRowid);
       setChatId(Number(lastInsertRowid));
     }
@@ -23,7 +26,7 @@ export const useDb = () => {
 
   const appendToChat = async (message: UIMessage) => {
     try {
-      const lastInsertRowid = await init();
+      const lastInsertRowid = await init(message);
       const row: typeof messagesTable.$inferInsert = {
         role: message.role,
         parts: message.parts,

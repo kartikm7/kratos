@@ -31,7 +31,6 @@ export const useLlm = (): UseLLM => {
 
   const subAgent = new ToolLoopAgent({
     model: llm(subModel?.id),
-    instructions: SubAgentPrompt,
     tools: tools as ToolSet, // this shit is needed, but fuck it
     stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses
   });
@@ -39,11 +38,16 @@ export const useLlm = (): UseLLM => {
   const subAgentTool = tool({
     title: "SubAgent",
     inputSchema: z.object({
-      task: z.string().describe("The task to complete"),
+      phase: z.enum(["memories", "codebase", "build"])
+        .describe("The current phase of execution"),
+      task: z.string()
+        .describe("The specific task to complete within the phase"),
+      priorContext: z.string().optional()
+        .describe("Results from previous phases (if any)"),
     }),
-    execute: async function* ({ task }, { abortSignal }) {
+    execute: async function* ({ task, phase, priorContext }, { abortSignal }) {
       const result = await subAgent.stream({
-        prompt: task,
+        prompt: SubAgentPrompt(task, phase, priorContext),
         abortSignal, // Cancels subagent if main request is aborted
       });
 

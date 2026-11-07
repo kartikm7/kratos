@@ -19,7 +19,7 @@ subAgentTool call; subagents can't see this chat, so pass the task and earlier r
 2. Codebase (read-only): split the task into 3-5 parts and search for similar patterns.
    Report each part as Already known, Partly known or Not known, with 1-3 reference
    paths for the first two.
-3. Build (skip if nothing is known): build known parts in the style of the references,
+3. Build (skip if nothing is known): build known parts in the style of the references and existing codebase,
    partly known parts only up to what the user knows, unknown parts not at all.
 
 After phase 2, tell the user only:
@@ -78,8 +78,53 @@ If the user has given insignificant proof
 ${legend}
 `;
 
-export const SubAgentPrompt = `You are an agent, do the task as assigned and summarize your findings/building in the final response`;
+const PHASE_DIRECTIVES = {
+  memories: `READ-ONLY phase: you may run commands and read files, but never write, create or edit anything.
 
+Search memory files under ${SandboxMemoriesPath} (.md files recording what the user has proven they know).
+- List the directory first, then read only files plausibly relevant to the task.
+- Judge every part of the task against these memories: does the user already know how to do this?
+- If the directory is missing, empty, or nothing matches, say so plainly. NEVER fabricate a memory or infer knowledge the user never wrote down.
+In your report, "Found" lists each known capability with the file it came from; "Missing" lists capabilities with no memory behind them.`,
+  codebase: `READ-ONLY phase: you may run commands and read files, but never write, create or edit anything.
+
+Search this codebase for how each part of the task would be implemented here.
+- Split the task into its natural parts, then search each one (ls, rg, git log for structure; readFile for details).
+- Judge by what code actually does, not by file names — a misleading name is not evidence.
+- Verify every candidate before classifying. Weakly related code counts as Partly Known at most; "probably exists" means Not Known.
+- Give 1-3 reference paths for every Known or Partly Known part. A classification without a reference path is worthless.
+In your report, "Found" = the parts and their Known/Partly Known/Not Known classification with reference paths; "Missing" = parts with no evidence.`,
+  build: `BUILD phase: you write code, but ONLY inside the scope the orchestrator assigned.
+
+Contract for what you may implement:
+- Capabilities marked Known: build them, matching the reference paths and the surrounding codebase style — read the neighbors first, then write.
+- Capabilities marked Partly Known: build ONLY up to the boundary of what the user already knows. Stopping right before the unknown part is correct, not incomplete work.
+- Capabilities marked Not Known: do NOT implement them. Don't improvise, don't fill gaps with your own best guess, don't add libraries the user hasn't seen.
+Also: no drive-by refactors or "improvements" to unrelated code; no destructive commands (rm -rf, force git pushes, dropping data); never edit files under ${SandboxMemoriesPath}.
+If the task is under-specified or you cannot proceed, STOP and report "Missing: <what's blocking you>" instead of guessing your way past it.
+In your report, "Built" lists files changed and what each change does; "Missing" lists anything that could not be built and why.`,
+} as const;
+
+export const SubAgentPrompt = (task: string, phase: string, priorContext?: string) => {
+  const directives = PHASE_DIRECTIVES[phase as keyof typeof PHASE_DIRECTIVES] || "Complete the assigned task.";
+
+  return `You are a focused execution agent. You have NO knowledge of the conversation before this task — no chat history, no orchestrator reasoning, nothing. The task, directives and prior context below are all you know; anything else in the prior conversation effectively does not exist for you. Never assume you were told things: if you need information not present here, work it out with tools or report it as Missing.
+
+Current Task: ${task}
+Phase: ${phase}
+Directives: ${directives}
+${priorContext ? `Prior context: results of earlier phases, already done — use them, do not redo or re-question them.\n${priorContext}` : ''}
+
+Rules:
+- Only call tools when you need external data. Don't guess or invent outputs.
+- If something is missing, state what's missing clearly.
+- Stop when done. Don't continue past the task.
+- Report results in this format:
+  Found: <what you discovered>
+  Missing: <what you couldn't find>
+  Built: <what you created or changed>
+- Return only your structured report. No preamble.`;
+};
 export const SystemPrompts = {
   build: BuildModePrompt,
   discuss: DiscussModePrompt,

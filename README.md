@@ -20,6 +20,14 @@ curl -sS https://raw.githubusercontent.com/kartikm7/kratos/refs/heads/main/scrip
 irm https://raw.githubusercontent.com/kartikm7/kratos/refs/heads/main/scripts/install/install.ps1 | iex
 ```
 
+### Adding your first provider
+
+1. Launch `kratos` in your Project directory
+2. Type `/connect` on the input bar
+3. Choose a provider and paste your API key if need be (incase of using locally running providers you might not need to pass an api key)
+4. Now `/model` should show all the available models that your provider provides
+5. Once you've selected a model via `/model`, you can start chatting!
+
 ## Why Kratos?
 
 All the current Agentic AI solutions are aimed at being addictive, the long term effects of such tools are unknown but I do believe there's an atrophy in skill. I personally find it frustrating that we are all just focused on velocity, and not the details. Engineering solutions have impact not only from architectural decisions but also from code-level reasoning.
@@ -30,7 +38,7 @@ Engineering is a joyous field, it's fun like really really fun and AI is suppose
 
 ## Current Task List
 
-This is being maintained within `/docs``
+This is being maintained within `/docs`
 
 ## Setup Kratos
 

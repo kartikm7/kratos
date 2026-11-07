@@ -11,13 +11,13 @@ An agentic coding workflow that actually aims to assist you and not replace you.
 1. MacOS/Linux
 
 ```bash
-   curl -sS https://raw.githubusercontent.com/kartikm7/kratos/refs/heads/main/scripts/install/install.sh | bash
+curl -sS https://raw.githubusercontent.com/kartikm7/kratos/refs/heads/main/scripts/install/install.sh | bash
 ```
 
 2. Windows
 
-```pwsh
-  irm https://raw.githubusercontent.com/kartikm7/kratos/refs/heads/main/scripts/install/install.ps1 | iex
+```cmd
+irm https://raw.githubusercontent.com/kartikm7/kratos/refs/heads/main/scripts/install/install.ps1 | iex
 ```
 
 ## Why Kratos?

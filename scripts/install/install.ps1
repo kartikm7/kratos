@@ -15,7 +15,7 @@ mkdir $path 2>$null
 
 echo "Downloading Kartos"
 
-curl -L --progress-bar $url --create-dirs -O --output-dir $path
+curl.exe -L --progress-bar $url --create-dirs -O --output-dir $path
 
 
 echo "Downloaded Kartos"

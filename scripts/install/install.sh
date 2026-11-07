@@ -47,7 +47,7 @@ echo "   ▄█   ▄█▄    ▄████████    ▄█████
 
 echo "Aims to assist not replace."
 
-if ! where kratos; then
+if ! command -v kratos &>/dev/null; then
   export PATH="$HOME/.local/bin:$PATH"
   echo "NOTE: Add kratos to your path (for it to persist)"
   echo "export PATH=\"\$HOME/.local/bin:\$PATH\""

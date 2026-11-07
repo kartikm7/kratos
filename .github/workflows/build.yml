@@ -30,7 +30,7 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install Dependencies
-        run: bun install --os="*" --cpu="*"
+        run: bun install --os="*" --cpu="*" --libc="*"
 
       - name: Build
         run: bun build --target=bun-${{ matrix.version }} --trim --compile --format=esm  ./src/index.tsx --outfile ./dist/kratos-${{ matrix.version }}

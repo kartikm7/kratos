@@ -21,7 +21,7 @@ curl.exe -L --progress-bar $url --create-dirs -O --output-dir $path
 echo "Downloaded Kartos"
 
 $old_binary_path = $path + "\kratos.exe"
-rm $old_binary_path -fo
+rm $old_binary_path -fo 2>$null
 
 Rename-Item -Path $binary_path -NewName "kratos.exe" 2>$null
 

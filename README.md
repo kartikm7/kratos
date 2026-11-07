@@ -1,8 +1,24 @@
 # Kratos
 
-<img width="933" height="370" alt="Image" src="https://github.com/user-attachments/assets/c9429282-213b-40e3-baec-a8e10b2ec0b2" />
-
 An agentic coding workflow that actually aims to assist you and not replace you.
+
+<img width="937" height="665" alt="Image" src="https://github.com/user-attachments/assets/aff7a27a-d526-4669-8a4c-94b67640d1eb" />
+
+## Getting Started
+
+### Install Kratos:
+
+1. MacOS/Linux
+
+```bash
+   curl -sS https://raw.githubusercontent.com/kartikm7/kratos/refs/heads/main/scripts/install/install.sh | bash
+```
+
+2. Windows
+
+```pwsh
+  irm https://raw.githubusercontent.com/kartikm7/kratos/refs/heads/main/scripts/install/install.ps1 | iex
+```
 
 ## Why Kratos?
 

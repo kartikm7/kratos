@@ -7,7 +7,7 @@ import {
   ReadWriteFs,
   type IFileSystem,
 } from "just-bash";
-import { AppDirectory } from "../../os";
+import { AppDirectory, UserOS } from "../../os";
 
 export const BashFactory = async (readWrite = false) => {
   // ReadWriteFs gives full read-write access, but only to the directory we have allowed - rest are blocked out.
@@ -35,15 +35,17 @@ export const BashFactory = async (readWrite = false) => {
     cwd: "/",
   });
 
+  const isWindows = UserOS.toLowerCase().includes("windows");
   const { tools } = await createBashTool({
     sandbox: sandboxBash,
     destination: "/",
-    extraInstructions: `While using bash-tool, you might have trouble traversing,
-- the current working directory is mounted at "\\" (contains user files)
-  - eg. cat \\src\\index.ts
-- the app directory is mounted at "\\.kratos" (contains Memories folder)
-  - eg. cat \\.kratos\\Memories\\test.md
-    `,
+    extraInstructions: isWindows
+      ? `Windows path notes:
+- the current working directory is mounted at "\\" (contains user files), eg. cat \\src\\index.ts
+- the app directory is mounted at "\\.kratos" (contains Memories folder), eg. cat \\.kratos\\Memories\\test.md`
+      : `Path notes:
+- the current working directory is mounted at "/" (contains user files), eg. cat src/index.ts
+- the app directory is mounted at "/.kratos" (contains the Memories folder), eg. cat /.kratos/Memories/test.md`,
   });
   const { bash, readFile, writeFile } = tools;
   return { bash, readFile, writeFile };

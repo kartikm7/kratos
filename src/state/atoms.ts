@@ -10,11 +10,11 @@ import type { Theme } from "../themes/types";
 import kratosTheme from "../themes/variants/kratos.json" with { type: "json" };
 import type { ChatModes } from "../utils/constants";
 import { createModel } from "../utils/models";
-import { readSelectedModel } from "../utils/preferences";
+import { readPreferences } from "../utils/preferences";
 import { readAuth } from "../utils/auth";
 
 const connectedProviders = readAuth();
-const selectedModel = readSelectedModel();
+const selectedModel = readPreferences().selectedModel;
 
 // creating model
 const model = createModel(selectedModel as Model | undefined, connectedProviders || {});

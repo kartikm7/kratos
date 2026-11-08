@@ -7,7 +7,7 @@ import {
   modelsListAtom,
   selectedModelAtom,
 } from "../../../state/atoms";
-import { saveSelectedModel, updatePreferences } from "../../../utils/preferences";
+import { updatePreferences } from "../../../utils/preferences";
 import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
 import type { Model, ModelsList } from "../../../state/types";

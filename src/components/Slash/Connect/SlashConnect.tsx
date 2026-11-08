@@ -1,17 +1,19 @@
 import { useDialog, type DialogActions } from "@opentui-ui/dialog/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { saveProviderConfig } from "../../../utils/auth";
 import { Combobox } from "../../../ui/Combobox";
 import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
 import { connectedProvidersAtom, modelsListAtom } from "../../../state/atoms";
 import { useAtomValue, useSetAtom } from "jotai";
-import type { SelectOption } from "@opentui/core";
+import type { InputRenderable, SelectOption } from "@opentui/core";
 import { LOCAL_PROVIDER } from "../../../utils/constants";
 import type { ConnectedProvider } from "../../../state/types";
 import { useToast } from "../../../hooks/useToast";
+import { useKeyboard } from "@opentui/react";
 
 const SlashConnectDialog = () => {
-  const [text, setText] = useState("");
+  const apiKeyRef = useRef<InputRenderable>(null)
+  const baseUrlRef = useRef<InputRenderable>(null)
   const list = useAtomValue(modelsListAtom);
   const setConnectedProviders = useSetAtom(connectedProvidersAtom);
   const [comboboxValue, setComboboxValue] = useState<
@@ -19,9 +21,18 @@ const SlashConnectDialog = () => {
   >();
   const dialog = useDialog();
   const { toast } = useToast();
-  const flatenned = Object.entries(list ?? {}).map((entry) => {
-    return { name: entry[0], value: entry[0], description: "" };
-  });
+  const isLocalProvider = comboboxValue?.value === LOCAL_PROVIDER
+
+  useEffect(() => {
+    if (isLocalProvider) baseUrlRef.current?.focus()
+  }, [isLocalProvider, baseUrlRef.current])
+
+  useKeyboard(key => {
+    if (key.name == "tab") {
+      if (!baseUrlRef.current?.focused) baseUrlRef.current?.focus()
+      else apiKeyRef.current?.focus()
+    }
+  })
 
   const updatePersistedState = (
     provider: string,
@@ -50,12 +61,14 @@ const SlashConnectDialog = () => {
 
   const handleSubmit = () => {
     try {
+      const baseUrl = baseUrlRef?.current?.value || ""
+      const apiKey = apiKeyRef?.current?.value || ""
       if (!comboboxValue) {
         toast.error("Provider name is missing dawg");
         return;
       }
 
-      if (!text.trim()) {
+      if (comboboxValue.value !== LOCAL_PROVIDER && !apiKey.trim()) {
         toast.error("API key is missing");
         return;
       }
@@ -69,12 +82,13 @@ const SlashConnectDialog = () => {
         config = {
           type: LOCAL_PROVIDER,
           provider: LOCAL_PROVIDER,
-          baseUrl: text,
+          baseUrl: baseUrl,
+          key: apiKey
         };
       } else {
         config = {
           type: "api",
-          key: text,
+          key: apiKey,
         };
       }
 
@@ -108,13 +122,18 @@ const SlashConnectDialog = () => {
         />
       ) : (
         <>
+          {comboboxValue.value === LOCAL_PROVIDER && <input
+            ref={baseUrlRef}
+            placeholder="base url"
+            onSubmit={handleSubmit}
+          />
+          }
           <input
+            ref={apiKeyRef}
             placeholder={
-              comboboxValue.value === LOCAL_PROVIDER ? "base url" : "api key"
+              comboboxValue.value === LOCAL_PROVIDER ? "api key (optional)" : "api key"
             }
             onSubmit={handleSubmit}
-            onInput={setText}
-            value={text}
             focused
           />
           <text>

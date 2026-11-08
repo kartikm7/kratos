@@ -99,7 +99,7 @@ async function createModel(
       name: selectedModel.name,
       baseURL: auth.baseUrl,
       includeUsage: true,
-      apiKey: "not-needed",
+      apiKey: auth.key,
     });
   }
 

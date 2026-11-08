@@ -68,6 +68,7 @@ type LocalConnectedProvider = {
   type: "local";
   provider: string;
   baseUrl: string;
+  key: string;
 };
 
 type ConnectedProvider = ApiConnectedProvider | LocalConnectedProvider;

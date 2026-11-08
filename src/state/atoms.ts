@@ -4,6 +4,7 @@ import {
   type MessageStream,
   type Model,
   type ModelsList,
+  type Preferences,
   type Toast,
 } from "./types";
 import type { Theme } from "../themes/types";
@@ -14,13 +15,13 @@ import { readPreferences } from "../utils/preferences";
 import { readAuth } from "../utils/auth";
 
 const connectedProviders = readAuth();
-const selectedModel = readPreferences().selectedModel;
+const preferences = readPreferences();
 
 // creating model
-const model = createModel(selectedModel as Model | undefined, connectedProviders || {});
+const model = createModel(preferences.selectedModel as Model | undefined, connectedProviders || {});
 export const llmAtom = atom<any>(model); // need to figure a generic type for this
 // TODO: Most likely string is not the right type, when I start adding tools this will most likely cause a problem
-export const selectedModelAtom = atom<Model>();
+export const preferencesAtom = atom<Preferences>(preferences);
 export const modelsListAtom = atom<ModelsList | null>(null);
 export const connectedProvidersAtom = atom<ConnectedProvidersList>();
 export const themeAtom = atom<Theme>(kratosTheme);

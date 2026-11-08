@@ -7,7 +7,7 @@ import {
   collapseAtom,
   connectedProvidersAtom,
   llmAtom,
-  selectedModelAtom,
+  preferencesAtom,
 } from "./state/atoms";
 import { createModel } from "./utils/models";
 import { readAuth } from "./utils/auth";
@@ -28,7 +28,7 @@ import { ClipboardTarget } from "@opentui/core";
 
 export default function App() {
   const setConnectedProvidersList = useSetAtom(connectedProvidersAtom);
-  const setSelectedModel = useSetAtom(selectedModelAtom);
+  const setPreferences = useSetAtom(preferencesAtom);
   const setLlm = useSetAtom(llmAtom);
   const setCollapse = useSetAtom(collapseAtom);
   const { width, height } = useTerminalDimensions();
@@ -58,7 +58,10 @@ export default function App() {
     fetchAndSetModelsList();
     const connectedProviders = readAuth();
     const { selectedModel } = readPreferences();
-    setSelectedModel(selectedModel); // load cached model
+    setPreferences(pre => {
+      pre.selectedModel = selectedModel // load cached model
+      return pre
+    });
     setConnectedProvidersList(connectedProviders);
 
     if (selectedModel) {

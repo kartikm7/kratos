@@ -1,5 +1,5 @@
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { chatModeAtom, llmAtom, selectedModelAtom } from "../state/atoms";
+import { useAtom, useAtomValue } from "jotai";
+import { chatModeAtom, llmAtom, preferencesAtom } from "../state/atoms";
 import {
   DirectChatTransport,
   readUIMessageStream,
@@ -26,7 +26,7 @@ export const useLlm = (): UseLLM => {
   const chatMode = useAtomValue(chatModeAtom);
   const { appendToChat } = useDb();
   let tools = getModeSpecificTools(chatMode);
-  const selectedModel = useAtomValue(selectedModelAtom);
+  const { selectedModel } = useAtomValue(preferencesAtom);
   const subModel = selectedModel;
 
   const subAgent = new ToolLoopAgent({

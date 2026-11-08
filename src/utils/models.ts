@@ -142,6 +142,16 @@ async function createModel(
     createModel = pkg[dynamicModuleName || ""];
   }
 
+  // if still nothing works, let's use the generic openai-compatible api
+  if (!createModel) {
+    return createOpenAICompatible({
+      name: selectedModel.name,
+      baseURL: selectedModel.providerInfo.api || "",
+      apiKey: auth?.key || "",
+      includeUsage: true
+    })
+  }
+
   const model = createModel({ apiKey: auth?.key });
   return model;
 }

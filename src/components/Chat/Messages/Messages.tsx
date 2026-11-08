@@ -26,7 +26,11 @@ export const Messages = ({ messages, streaming = false }: MessagesProps) => {
         return (
           <box
             key={msg.id}
-            backgroundColor={isUser ? theme.dark.palette.accent : undefined}
+            border={isUser ? ["left"] : []}
+            borderStyle="heavy"
+            borderColor={isUser ? theme.dark.palette.accent : undefined}
+            backgroundColor={isUser ? theme.dark.palette.neutral : undefined}
+            paddingY={isUser ? 1 : undefined}
           >
             {msg.parts.map((part, idx) => {
               const state =

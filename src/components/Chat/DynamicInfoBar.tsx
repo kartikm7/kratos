@@ -58,9 +58,10 @@ export const DynamicInfoBar = ({
           </>
         )}
       </box>
-      <box>
+      <box alignItems="center" flexDirection="row">
+        <text fg="grey">f1 help</text>
         <AccentText opacity={selectedModel ? 1 : 0.5}>
-          {selectedModel?.id ? `${selectedModel?.id} ${!!effort ? `· ${effortIndicator[effort]} ${effort}` : ""}` : "No model selected (Run /connect, then /model)"}
+          {selectedModel?.id ? ` · ${selectedModel?.id} ${!!effort ? `· ${effortIndicator[effort]} ${effort}` : ""}` : " · No model selected (Run /connect, then /model)"}
         </AccentText>
       </box>
     </box>

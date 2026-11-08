@@ -25,6 +25,7 @@ import { ChatProvider } from "./providers/ChatProvider";
 import { Toaster } from "./ui/Toaster";
 import { useToast } from "./hooks/useToast";
 import { ClipboardTarget } from "@opentui/core";
+import { HelpShortcut } from "./components/Help/HelpShortcut";
 
 export default function App() {
   const setConnectedProvidersList = useSetAtom(connectedProvidersAtom);
@@ -79,6 +80,7 @@ export default function App() {
         <ChatProvider>
           <Toaster />
           <DialogProvider backdropOpacity={0}>
+            <HelpShortcut />
             <RootLayout>
               <Chat />
             </RootLayout>

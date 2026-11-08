@@ -16,6 +16,7 @@ import { SlashResume } from "../Slash/Resume/SlashResume";
 import { SlashRename } from "../Slash/Rename/SlashRename";
 import { SlashEffort } from "../Slash/Effort/SlashEffort";
 import { SlashTheme } from "../Slash/Theme/SlashTheme";
+import { HelpDialog } from "../Help/HelpDialog";
 
 interface CustomInputProps extends TextareaProps {
   loading?: boolean;
@@ -129,6 +130,9 @@ export const Input = ({
         break;
       case "/theme":
         SlashTheme(dialog);
+        break;
+      case "/help":
+        HelpDialog(dialog);
         break;
       default:
         break;

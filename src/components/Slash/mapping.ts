@@ -16,4 +16,5 @@ export const SlashOptions = [
   { name: "/rename", description: "rename the on-going chat" },
   { name: "/effort", description: "change thinking effort of a model" },
   { name: "/theme", description: "switch the current theme" },
+  { name: "/help", description: "show the help dialog" },
 ];

@@ -1,6 +1,6 @@
 import type { BoxProps } from "@opentui/react";
 import { useAtomValue } from "jotai";
-import { chatModeAtom, selectedModelAtom, themeAtom } from "../../state/atoms";
+import { chatModeAtom, preferencesAtom, themeAtom } from "../../state/atoms";
 import { AccentText } from "../../ui/AccentText";
 import { capitalise } from "../../utils/string";
 
@@ -12,7 +12,7 @@ export const DynamicInfoBar = ({
   loading = false,
   ...props
 }: DynamicInfoBarProps) => {
-  const selectedModel = useAtomValue(selectedModelAtom);
+  const { selectedModel, effort } = useAtomValue(preferencesAtom);
   const theme = useAtomValue(themeAtom);
   const chatMode = useAtomValue(chatModeAtom);
   const modeColor = (() => {
@@ -48,7 +48,7 @@ export const DynamicInfoBar = ({
       </box>
       <box>
         <AccentText opacity={selectedModel ? 1 : 0.5}>
-          {selectedModel?.id || "No model selected (Run /connect, then /model)"}
+          {`${selectedModel?.id} (${effort})` || "No model selected (Run /connect, then /model)"}
         </AccentText>
       </box>
     </box>

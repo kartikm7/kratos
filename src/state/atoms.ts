@@ -16,6 +16,7 @@ import { readAuth } from "../utils/auth";
 
 const connectedProviders = readAuth();
 const preferences = readPreferences();
+console.log(preferences)
 
 // creating model
 const model = createModel(preferences.selectedModel as Model | undefined, connectedProviders || {});

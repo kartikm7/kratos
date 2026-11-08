@@ -5,7 +5,7 @@ import {
   connectedProvidersAtom,
   llmAtom,
   modelsListAtom,
-  selectedModelAtom,
+  preferencesAtom,
 } from "../../../state/atoms";
 import { updatePreferences } from "../../../utils/preferences";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -20,7 +20,7 @@ import { LOCAL_PROVIDER } from "../../../utils/constants";
 const SlashModelDialog = () => {
   const list = useAtomValue(modelsListAtom) as ModelsList;
   const setLlm = useSetAtom(llmAtom);
-  const setSelectedModel = useSetAtom(selectedModelAtom);
+  const setPreferences = useSetAtom(preferencesAtom);
   const connectedProviders = useAtomValue(connectedProvidersAtom);
   const { toast } = useToast();
   const dialog = useDialog();
@@ -83,7 +83,9 @@ const SlashModelDialog = () => {
       const model = createModel(selectedModel, connectedProviders || {});
       console.log("inside slash", model);
       setLlm(() => model); // created Model object
-      setSelectedModel(selectedModel);
+      setPreferences(pre => {
+        return { ...pre, selectedModel }
+      });
       updatePreferences("selectedModel", selectedModel);
       toast.success(`Set ${selectedModel.name} as the default model!`);
       dialog.closeAll();

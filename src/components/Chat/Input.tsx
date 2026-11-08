@@ -14,6 +14,7 @@ import { useRefreshModelsJson } from "../../hooks/useRefreshModelsJson";
 import { useChatContext } from "../../hooks/useChatContext";
 import { SlashResume } from "../Slash/Resume/SlashResume";
 import { SlashRename } from "../Slash/Rename/SlashRename";
+import { SlashEffort } from "../Slash/Effort/SlashEffort";
 
 interface CustomInputProps extends TextareaProps {
   loading?: boolean;
@@ -25,7 +26,7 @@ export const Input = ({
   placeholder = "",
   autocomplete = true,
   loading = false,
-  onSubmit = () => {},
+  onSubmit = () => { },
   ...props
 }: CustomInputProps) => {
   const { width } = useContext(DimensionsContext);
@@ -82,7 +83,7 @@ export const Input = ({
       case "return":
         // this is actually the submit state
         if (isSlashTriggered) {
-          onSubmit = () => {}; // because we can't submit an empty function?
+          onSubmit = () => { }; // because we can't submit an empty function?
           handleSelectionSubmit();
         }
         break;
@@ -121,6 +122,9 @@ export const Input = ({
         break;
       case "/rename":
         SlashRename(dialog);
+        break;
+      case "/effort":
+        SlashEffort(dialog);
         break;
       default:
         break;

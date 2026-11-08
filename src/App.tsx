@@ -59,8 +59,7 @@ export default function App() {
     const connectedProviders = readAuth();
     const { selectedModel } = readPreferences();
     setPreferences(pre => {
-      pre.selectedModel = selectedModel // load cached model
-      return pre
+      return { ...pre, selectedModel }
     });
     setConnectedProvidersList(connectedProviders);
 

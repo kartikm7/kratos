@@ -26,11 +26,12 @@ export const useLlm = (): UseLLM => {
   const chatMode = useAtomValue(chatModeAtom);
   const { appendToChat } = useDb();
   let tools = getModeSpecificTools(chatMode);
-  const { selectedModel } = useAtomValue(preferencesAtom);
+  const { selectedModel, effort } = useAtomValue(preferencesAtom);
   const subModel = selectedModel;
 
   const subAgent = new ToolLoopAgent({
     model: llm(subModel?.id),
+    reasoning: effort || "provider-default",
     tools: tools as ToolSet, // this shit is needed, but fuck it
     stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses
   });
@@ -77,6 +78,7 @@ export const useLlm = (): UseLLM => {
         ? new DirectChatTransport({
           agent: new ToolLoopAgent({
             model: llm(selectedModel?.id),
+            reasoning: effort || "provider-default",
             instructions: systemPrompt,
             tools: tools as ToolSet, // this shit is needed, but fuck it
             stopWhen: [stepCountIs(DEFAULT_AGENT_STEP_COUNT)], // TODO: Should have no limit mode, so that there aren't pauses

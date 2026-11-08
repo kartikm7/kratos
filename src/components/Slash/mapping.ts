@@ -14,4 +14,5 @@ export const SlashOptions = [
     description: "clears your on-going chat, and starts a new session",
   },
   { name: "/rename", description: "rename the on-going chat" },
+  { name: "/effort", description: "change thinking effort of a model" },
 ];

@@ -7,7 +7,7 @@ import {
   modelsListAtom,
   selectedModelAtom,
 } from "../../../state/atoms";
-import { saveSelectedModel } from "../../../utils/preferences";
+import { saveSelectedModel, updatePreferences } from "../../../utils/preferences";
 import { useAtomValue, useSetAtom } from "jotai";
 import type { SelectOption } from "@opentui/core";
 import type { Model, ModelsList } from "../../../state/types";
@@ -84,7 +84,7 @@ const SlashModelDialog = () => {
       console.log("inside slash", model);
       setLlm(() => model); // created Model object
       setSelectedModel(selectedModel);
-      saveSelectedModel(selectedModel);
+      updatePreferences("selectedModel", selectedModel);
       toast.success(`Set ${selectedModel.name} as the default model!`);
       dialog.closeAll();
     } catch (error) {

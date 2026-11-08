@@ -11,7 +11,7 @@ import {
 } from "./state/atoms";
 import { createModel } from "./utils/models";
 import { readAuth } from "./utils/auth";
-import { readSelectedModel } from "./utils/preferences";
+import { readPreferences } from "./utils/preferences";
 import type { Model } from "./state/types";
 import {
   useKeyboard,
@@ -57,7 +57,7 @@ export default function App() {
   useEffect(() => {
     fetchAndSetModelsList();
     const connectedProviders = readAuth();
-    const selectedModel = readSelectedModel();
+    const { selectedModel } = readPreferences();
     setSelectedModel(selectedModel); // load cached model
     setConnectedProvidersList(connectedProviders);
 

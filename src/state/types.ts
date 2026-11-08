@@ -81,6 +81,21 @@ type Toast = {
   type: "success" | "error" | "info";
 } | null;
 
+type Effort =
+  | "provider-default"
+  | "none"
+  | "minimal"
+  | "low"
+  | "medium"
+  | "high"
+  | "xhigh"
+  | "max";
+
+type Preferences = {
+  selectedModel?: Model,
+  effort?: Effort
+}
+
 export {
   type Model,
   type ProviderDetails,
@@ -92,4 +107,5 @@ export {
   type AiMessage,
   type MessageStream,
   type Toast,
+  type Preferences
 };

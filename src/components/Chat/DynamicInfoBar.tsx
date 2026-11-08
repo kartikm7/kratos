@@ -27,6 +27,18 @@ export const DynamicInfoBar = ({
         break;
     }
   })();
+
+  const effortIndicator = {
+    "provider-default": "◌",
+    none: "○",
+    minimal: "◔",
+    low: "◔",
+    medium: "◑",
+    high: "◕",
+    xhigh: "✧",
+    max: "✦",
+  };
+
   return (
     <box
       paddingX={1}
@@ -48,7 +60,7 @@ export const DynamicInfoBar = ({
       </box>
       <box>
         <AccentText opacity={selectedModel ? 1 : 0.5}>
-          {`${selectedModel?.id} (${effort})` || "No model selected (Run /connect, then /model)"}
+          {selectedModel?.id ? `${selectedModel?.id} ${!!effort ? `· ${effortIndicator[effort]} ${effort}` : ""}` : "No model selected (Run /connect, then /model)"}
         </AccentText>
       </box>
     </box>

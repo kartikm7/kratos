@@ -17,14 +17,14 @@ const SlashEffortDialog = () => {
       if (!comboxboxValue) throw new Error('')
       const { value: effort } = comboxboxValue
       if (!effort.trim()) {
-        toast.error("Chat title cannot be empty");
+        toast.error("Effort cannot be empty");
         return;
       }
       setPreferences(pre => {
         return { ...pre, effort }
       })
       updatePreferences("effort", effort)
-      toast.success("Chat renamed successfully!");
+      toast.success("Effort set successfully!");
       dialog.closeAll();
     } catch (error) {
       toast.error(`Something went wrong ${error}`);

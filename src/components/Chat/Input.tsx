@@ -15,6 +15,7 @@ import { useChatContext } from "../../hooks/useChatContext";
 import { SlashResume } from "../Slash/Resume/SlashResume";
 import { SlashRename } from "../Slash/Rename/SlashRename";
 import { SlashEffort } from "../Slash/Effort/SlashEffort";
+import { SlashTheme } from "../Slash/Theme/SlashTheme";
 
 interface CustomInputProps extends TextareaProps {
   loading?: boolean;
@@ -125,6 +126,9 @@ export const Input = ({
         break;
       case "/effort":
         SlashEffort(dialog);
+        break;
+      case "/theme":
+        SlashTheme(dialog);
         break;
       default:
         break;

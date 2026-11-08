@@ -8,7 +8,7 @@ import {
   type Toast,
 } from "./types";
 import type { Theme } from "../themes/types";
-import kratosTheme from "../themes/variants/kratos.json" with { type: "json" };
+import { getTheme } from "../themes";
 import type { ChatModes } from "../utils/constants";
 import { createModel } from "../utils/models";
 import { readPreferences } from "../utils/preferences";
@@ -25,7 +25,7 @@ export const llmAtom = atom<any>(model); // need to figure a generic type for th
 export const preferencesAtom = atom<Preferences>(preferences);
 export const modelsListAtom = atom<ModelsList | null>(null);
 export const connectedProvidersAtom = atom<ConnectedProvidersList>();
-export const themeAtom = atom<Theme>(kratosTheme);
+export const themeAtom = atom<Theme>(getTheme(preferences.theme));
 export const collapseAtom = atom<boolean>(true);
 export const chatModeAtom = atom<ChatModes>("build"); // court mode will be fun as fuck
 

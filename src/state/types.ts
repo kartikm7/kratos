@@ -93,7 +93,8 @@ type Effort =
 
 type Preferences = {
   selectedModel?: Model,
-  effort?: Effort
+  effort?: Effort,
+  theme?: string
 }
 
 export {

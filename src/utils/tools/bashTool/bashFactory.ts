@@ -1,6 +1,7 @@
 import { createBashTool } from "bash-tool";
 import {
   Bash,
+  defineCommand,
   InMemoryFs,
   MountableFs,
   OverlayFs,
@@ -8,6 +9,23 @@ import {
   type IFileSystem,
 } from "just-bash";
 import { AppDirectory, UserOS } from "../../os";
+import { promisify } from "util";
+import { execFile } from "child_process";
+
+const execCommand = promisify(execFile)
+
+const CommandFactory = (cmd: string) => {
+  return defineCommand(cmd, async (args, _ctx) => {
+    try {
+      const { stdout, stderr } = await execCommand(cmd, args)
+      return { stdout, stderr, exitCode: 0 }
+    } catch (e) {
+      return { stdout: "Something went wrong", stderr: JSON.stringify(e, null, 4), exitCode: 1 }
+    }
+  })
+}
+
+const customCommands = ["git", "gh"].map(val => CommandFactory(val))
 
 export const BashFactory = async (readWrite = false) => {
   // ReadWriteFs gives full read-write access, but only to the directory we have allowed - rest are blocked out.
@@ -33,6 +51,7 @@ export const BashFactory = async (readWrite = false) => {
   const sandboxBash = new Bash({
     fs: mainFs,
     cwd: "/",
+    customCommands
   });
 
   const isWindows = UserOS.toLowerCase().includes("windows");

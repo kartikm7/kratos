@@ -25,7 +25,7 @@ const CommandFactory = (cmd: string) => {
   })
 }
 
-const customCommands = ["git", "gh"].map(val => CommandFactory(val))
+const customCommands = ["git"].map(val => CommandFactory(val))
 
 export const BashFactory = async (readWrite = false) => {
   // ReadWriteFs gives full read-write access, but only to the directory we have allowed - rest are blocked out.

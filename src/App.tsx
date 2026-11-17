@@ -26,6 +26,7 @@ import { Toaster } from "./ui/Toaster";
 import { useToast } from "./hooks/useToast";
 import { ClipboardTarget } from "@opentui/core";
 import { HelpShortcut } from "./components/Help/HelpShortcut";
+import { useMCP } from "./hooks/useMCP";
 
 export default function App() {
   const setConnectedProvidersList = useSetAtom(connectedProvidersAtom);
@@ -35,14 +36,15 @@ export default function App() {
   const { width, height } = useTerminalDimensions();
   const { fetchAndSetModelsList } = useRefreshModelsJson();
   const { toast } = useToast();
+  const { loadTools } = useMCP()
   const renderer = useRenderer();
 
   useSelectionHandler((selection) => {
     try {
       const text = selection.getSelectedText();
       if (text.length > 0)
+        // TODO: Update state somewhere! (Most likely in DynamicInfoBar)
         renderer.copyToClipboardOSC52(text, ClipboardTarget.Primary);
-      // TODO: Update state somewhere! (Most likely in DynamicInfoBar)
     } catch (e) {
       toast.error((e as Error).message ?? "Error while copying");
     }
@@ -56,6 +58,7 @@ export default function App() {
   });
 
   useEffect(() => {
+    loadTools();
     fetchAndSetModelsList();
     const connectedProviders = readAuth();
     const { selectedModel } = readPreferences();

@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue } from "jotai";
-import { chatModeAtom, llmAtom, preferencesAtom } from "../state/atoms";
+import { chatModeAtom, llmAtom, mcpToolsAtom, preferencesAtom } from "../state/atoms";
 import {
   DirectChatTransport,
   readUIMessageStream,
@@ -28,6 +28,7 @@ export const useLlm = (): UseLLM => {
   let tools = getModeSpecificTools(chatMode);
   const { selectedModel, effort } = useAtomValue(preferencesAtom);
   const subModel = selectedModel;
+  const mcpTools = useAtomValue(mcpToolsAtom)
 
   const subAgent = new ToolLoopAgent({
     model: llm(subModel?.id),
@@ -69,7 +70,7 @@ export const useLlm = (): UseLLM => {
     },
   });
   const systemPrompt = SystemPrompts[chatMode];
-  if (chatMode === "build") tools = { subAgentTool, ...tools } as ToolSet;
+  if (chatMode === "build") tools = { subAgentTool, ...tools, ...mcpTools } as ToolSet;
 
   // no model selected yet -> keep the app usable, error only when a message is sent
   const transport = useMemo(
@@ -91,7 +92,7 @@ export const useLlm = (): UseLLM => {
           },
           reconnectToStream: async () => null,
         },
-    [llm, chatMode, selectedModel],
+    [llm, chatMode, selectedModel, mcpTools],
   );
   const res = useChat({
     transport,

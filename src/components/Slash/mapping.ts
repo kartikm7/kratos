@@ -1,5 +1,6 @@
 export const SlashOptions = [
   { name: "/connect", description: "connect to your api provider" },
+  { name: "/connect-mcp", description: "add an MCP server (stdio or remote)" },
   { name: "/model", description: "choose a model across providers" },
   {
     name: "/refresh-models",

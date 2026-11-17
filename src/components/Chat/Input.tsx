@@ -4,6 +4,7 @@ import "opentui-spinner/react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { SlashOptions } from "../Slash/mapping";
 import { SlashConnect } from "../Slash/Connect/SlashConnect";
+import { SlashMcp } from "../Slash/Mcp/SlashMcp";
 import { useDialog, useDialogState } from "@opentui-ui/dialog/react";
 import { SlashModel } from "../Slash/Model/SlashModel";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -107,6 +108,9 @@ export const Input = ({
     switch (selection.name) {
       case "/connect":
         SlashConnect(dialog);
+        break;
+      case "/connect-mcp":
+        SlashMcp(dialog);
         break;
       case "/model":
         SlashModel(dialog);

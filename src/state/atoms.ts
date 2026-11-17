@@ -13,6 +13,8 @@ import type { ChatModes } from "../utils/constants";
 import { createModel } from "../utils/models";
 import { readPreferences } from "../utils/preferences";
 import { readAuth } from "../utils/auth";
+import { createMCPClient } from '@ai-sdk/mcp';
+import type { ToolSet } from "ai";
 
 const connectedProviders = readAuth();
 const preferences = readPreferences();
@@ -32,3 +34,4 @@ export const toastAtom = atom<Toast>(null);
 
 // current chat id
 export const chatIdAtom = atom<number | undefined>();
+export const mcpToolsAtom = atom<ToolSet>({});

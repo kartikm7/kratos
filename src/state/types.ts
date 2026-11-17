@@ -97,6 +97,26 @@ type Preferences = {
   theme?: string
 }
 
+type StdioMcpServer = {
+  type: "stdio";
+  name: string;
+  command: string;
+  args: string[];
+};
+
+type RemoteMcpServer = {
+  type: "remote";
+  name: string;
+  url: string;
+  headers?: Record<string, string>;
+};
+
+type McpServerConfig = StdioMcpServer | RemoteMcpServer;
+
+type McpServersList = {
+  [key: string]: McpServerConfig;
+};
+
 export {
   type Model,
   type ProviderDetails,
@@ -108,5 +128,9 @@ export {
   type AiMessage,
   type MessageStream,
   type Toast,
-  type Preferences
+  type Preferences,
+  type StdioMcpServer,
+  type RemoteMcpServer,
+  type McpServerConfig,
+  type McpServersList
 };

@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { saveProviderConfig } from "../../../utils/auth";
 import { Combobox } from "../../../ui/Combobox";
 import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
+import { SecondaryText } from "../../../ui/SecondaryText";
+import { Separator } from "../../../ui/Separator";
 import { connectedProvidersAtom, modelsListAtom } from "../../../state/atoms";
 import { useAtomValue, useSetAtom } from "jotai";
 import type { InputRenderable, SelectOption } from "@opentui/core";
@@ -114,6 +116,7 @@ const SlashConnectDialog = () => {
             ? "Enter your local provider base URL"
             : "Enter your API key"}
       </DialogHeader>
+      <Separator />
       {!comboboxValue ? (
         <Combobox
           setSubmitValue={setComboboxValue}
@@ -136,9 +139,10 @@ const SlashConnectDialog = () => {
             onSubmit={handleSubmit}
             focused
           />
-          <text>
-            enter <span style={{ fg: "grey" }}>submit</span>
-          </text>
+          <box flexDirection="row" columnGap={1}>
+            <text>enter</text>
+            <SecondaryText>submit</SecondaryText>
+          </box>
         </>
       )}
     </DialogRoot>

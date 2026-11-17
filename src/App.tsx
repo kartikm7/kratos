@@ -1,4 +1,3 @@
-import { DialogProvider } from "@opentui-ui/dialog/react";
 import { RootLayout } from "./components/AppLayout";
 import { Chat } from "./components/Chat/Chat";
 import { createContext, useContext, useEffect } from "react";
@@ -27,6 +26,7 @@ import { useToast } from "./hooks/useToast";
 import { ClipboardTarget } from "@opentui/core";
 import { HelpShortcut } from "./components/Help/HelpShortcut";
 import { useMCP } from "./hooks/useMCP";
+import { AppDialogs } from "./ui/Dialog";
 
 export default function App() {
   const setConnectedProvidersList = useSetAtom(connectedProvidersAtom);
@@ -82,12 +82,12 @@ export default function App() {
       <DimensionsContext value={{ width, height }}>
         <ChatProvider>
           <Toaster />
-          <DialogProvider backdropOpacity={0}>
+          <AppDialogs>
             <HelpShortcut />
             <RootLayout>
               <Chat />
             </RootLayout>
-          </DialogProvider>
+          </AppDialogs>
         </ChatProvider>
       </DimensionsContext>
     </>

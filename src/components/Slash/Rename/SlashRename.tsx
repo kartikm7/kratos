@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useDb } from "../../../hooks/useDb";
 import { useToast } from "../../../hooks/useToast";
 import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
+import { SecondaryText } from "../../../ui/SecondaryText";
+import { Separator } from "../../../ui/Separator";
 
 const SlashRenameDialog = () => {
   const [text, setText] = useState("");
@@ -29,6 +31,7 @@ const SlashRenameDialog = () => {
   return (
     <DialogRoot>
       <DialogHeader>Rename chat</DialogHeader>
+      <Separator />
       <input
         placeholder="Enter new title"
         onSubmit={handleSubmit}
@@ -36,9 +39,10 @@ const SlashRenameDialog = () => {
         value={text}
         focused
       />
-      <text>
-        enter <span style={{ fg: "grey" }}>submit</span>
-      </text>
+      <box flexDirection="row" columnGap={1}>
+        <text>enter</text>
+        <SecondaryText>submit</SecondaryText>
+      </box>
     </DialogRoot>
   );
 };

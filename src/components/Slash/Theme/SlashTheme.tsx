@@ -1,6 +1,8 @@
 import { useDialog, type DialogActions } from "@opentui-ui/dialog/react";
 import { useToast } from "../../../hooks/useToast";
 import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
+import { SecondaryText } from "../../../ui/SecondaryText";
+import { Separator } from "../../../ui/Separator";
 import { Combobox } from "../../../ui/Combobox";
 import { updatePreferences } from "../../../utils/preferences";
 import type { SelectOption } from "@opentui/core";
@@ -47,15 +49,17 @@ const SlashThemeDialog = () => {
   return (
     <DialogRoot>
       <DialogHeader>Theme</DialogHeader>
+      <Separator />
       <Combobox
         onSubmit={handleSubmit}
         showDescription
         placeholder="theme"
         options={options}
       />
-      <text>
-        enter <span style={{ fg: "grey" }}>submit</span>
-      </text>
+      <box flexDirection="row" columnGap={1}>
+        <text>enter</text>
+        <SecondaryText>submit</SecondaryText>
+      </box>
     </DialogRoot>
   );
 };

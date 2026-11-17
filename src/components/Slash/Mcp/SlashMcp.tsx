@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { upsertMcpServer } from "../../../utils/mcp";
 import { Combobox } from "../../../ui/Combobox";
 import { DialogHeader, DialogRoot } from "../../../ui/Dialog";
+import { SecondaryText } from "../../../ui/SecondaryText";
+import { Separator } from "../../../ui/Separator";
 import type { InputRenderable, SelectOption } from "@opentui/core";
 import type { McpServerConfig } from "../../../state/types";
 import { useToast } from "../../../hooks/useToast";
@@ -11,27 +13,6 @@ import { useKeyboard } from "@opentui/react";
 const STDIO_MODE = "stdio";
 const REMOTE_MODE = "remote";
 
-// headers come in as "Authorization: Bearer token, x-api-key: abc" (comma or newline separated)
-// each entry is split on the first ":" so values containing colons stay intact
-const parseHeaders = (raw: string): Record<string, string> => {
-  const headers: Record<string, string> = {};
-  raw
-    .split(/[,\n]/)
-    .map(entry => entry.trim())
-    .filter(Boolean)
-    .forEach(entry => {
-      const separatorIndex = entry.indexOf(":");
-      if (separatorIndex === -1) return;
-      const key = entry.slice(0, separatorIndex).trim();
-      const value = entry.slice(separatorIndex + 1).trim();
-      if (!key || !value) return;
-      headers[key] = value;
-    });
-  return headers;
-};
-
-// a pasted JSON blob in the first field is treated as a complete server config
-// so the whole object can be submitted at once instead of filling each field
 const parsePastedServer = (raw: string): McpServerConfig => {
   let parsed: Record<string, unknown>;
   try {
@@ -128,7 +109,6 @@ const SlashMcpDialog = () => {
       const name = nameRef?.current?.value || ""
       const rawName = name.trim()
 
-      // a pasted full config in the first field short-circuits the manual flow
       if (rawName.startsWith("{")) {
         let server: McpServerConfig;
         try {
@@ -161,7 +141,6 @@ const SlashMcpDialog = () => {
         const rawArgs = (argsRef?.current?.value || "").trim()
         let args: string[]
         if (rawArgs.startsWith("[")) {
-          // an explicit "[" signals JSON array intent, so never fall back to space splitting
           let parsed: unknown
           try {
             parsed = JSON.parse(rawArgs)
@@ -201,11 +180,21 @@ const SlashMcpDialog = () => {
           return;
         }
 
+        let headers: Record<string, string> | undefined
+        if (headersInput) {
+          try {
+            headers = JSON.parse(headersInput) as Record<string, string>;
+          } catch {
+            toast.error('Malformed headers JSON dawg - use {"key": "value"}');
+            return;
+          }
+        }
+
         server = {
           type: "remote",
           name: name.trim(),
           url: url.trim(),
-          ...(headersInput ? { headers: parseHeaders(headersInput) } : {}),
+          ...(headers && Object.keys(headers).length ? { headers } : {}),
         };
       }
 
@@ -228,6 +217,7 @@ const SlashMcpDialog = () => {
             ? "Enter your MCP command details"
             : "Enter your MCP server url"}
       </DialogHeader>
+      <Separator />
       {!comboboxValue ? (
         <Combobox
           setSubmitValue={setComboboxValue}
@@ -262,26 +252,23 @@ const SlashMcpDialog = () => {
                 placeholder="url"
                 onSubmit={handleSubmit}
               />
-              <text>
-                <span style={{ fg: "grey" }}>
-                  headers optional · key:value, comma separated
-                </span>
-              </text>
+              <SecondaryText>
+                headers optional · {"{"}"key": "value"{"}"} JSON
+              </SecondaryText>
               <input
                 ref={headersRef}
                 placeholder="headers (optional)"
                 onSubmit={handleSubmit}
               />
-              <text>
-                <span style={{ fg: "grey" }}>
-                  e.g. Authorization: Bearer token, x-api-key: abc
-                </span>
-              </text>
+              <SecondaryText>
+                e.g. {"{"}"Authorization": "Bearer token"{"}"}
+              </SecondaryText>
             </>
           )}
-          <text>
-            enter <span style={{ fg: "grey" }}>submit</span>
-          </text>
+          <box flexDirection="row" columnGap={1}>
+            <text>enter</text>
+            <SecondaryText>submit</SecondaryText>
+          </box>
         </>
       )}
     </DialogRoot>

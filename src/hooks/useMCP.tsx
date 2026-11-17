@@ -17,6 +17,9 @@ export const useMCP = () => {
       const info = config[key]
       const server = await createMCPClient({
         clientName: info?.name,
+        onUncaughtError(error) {
+          console.log(error)
+        },
         transport: info?.type === "remote" ? {
           type: "http",
           url: info.url

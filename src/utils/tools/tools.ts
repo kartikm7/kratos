@@ -15,6 +15,8 @@ const WebBrowserTool = tool({
     "Scrape from any website, this launches a headless chrome and returns the requested url page in markdown format",
   inputSchema: z.object({ url: z.string() }),
   execute: async ({ url }) => {
+    // TODO: Figure something to get by this, it's too risky man
+    if (url.includes("github")) return "Github is blocked from this tool, blacklisting prevention"
     await using view = new Bun.WebView({
       backend: {
         type: "chrome",
